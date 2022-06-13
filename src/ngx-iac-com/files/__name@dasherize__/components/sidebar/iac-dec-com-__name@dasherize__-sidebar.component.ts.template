@@ -1,0 +1,462 @@
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from "@angular/core";
+import { FormGroup } from "@angular/forms";
+import {
+  MatAccordion,
+  MatExpansionPanelDescription,
+} from "@angular/material/expansion";
+import { AtlpProgressBarService } from "projects/@atlp/components/progress-bar/service/progress-bar.service";
+import { AtlpSidebarService } from "projects/@atlp/components/sidebar/sidebar.service";
+import { AtlpPerfectScrollbarDirective } from "projects/@atlp/directives/atlp-perfect-scrollbar/atlp-perfect-scrollbar.directive";
+import { IconsService } from "projects/@atlp/services/icons.service";
+import { IacSidebarName } from "projects/atlp-iac-ui/projects/@iac-shared/models/enums/sidebar-name.enum";
+import { Subject, Subscription } from "rxjs";
+import { NgxUiLoaderService } from "ngx-ui-loader";
+import { SnakBarService } from "projects/@atlp/components/snak-bars/service/snak-bar-default.component";
+import { locale as navigationEnglish } from "../../i18n/en";
+import { locale as navigationArabic } from "../../i18n/ae";
+import { TranslateService } from "@ngx-translate/core";
+import { AtlpSlideBarDialogService } from "projects/@atlp/components/atlp-slidebar-dialog/services/atlp-slidebar-dialog.service";
+import { distinctUntilChanged, takeUntil } from "rxjs/operators";
+import { IacDecAppDataService } from "projects/atlp-iac-ui/projects/iac-dec-ui/src/shared/services/dec-app-data.service";
+import { IacDecpaymentResponseNotifyModel } from "projects/atlp-iac-ui/projects/iac-dec-ui/src/shared/iac-dec-payment-common/models/iac-dec-payment-notify.model";
+import {
+  IacAutoCompletePortsService,
+  IacAutoCompleteImporterService,
+} from "projects/atlp-iac-ui/projects/iac-dec-ui/src/shared/services/iac-dec-auto-complete.service";
+import { IacDecComSliderUtilService } from "../../../shared/services/iac-dec-com-slider-util.service";
+import { IacDecComSharedDataService } from "../../../shared/services/iac-dec-com-shared-data.service";
+import { IacDecComProgressBarService } from "../../../shared/services/iac-dec-com-progress-bar.service";
+import { IacDecComCommonService } from "../../../shared/services/iac-dec-com-common.service";
+import { IacDecComPaymentData } from "../../../shared/iac-dec-com-payment-common/models/iac-dec-com-payment.model";
+import {
+  IacDecComDocInputModel,
+  IacDecComServiceType,
+} from "../../../shared/iac-dec-com-fileupload-common/iac-dec-com-shared-upload/models/iac-dec-com-doc-list.model";
+import { IacDecComAccordionOneComponent } from "./accordion-modules/iac-dec-com-accordion-one/iac-dec-com-accordion-one/iac-dec-com-accordion-one.component";
+import { IacDecComAccordionTwoComponent } from "./accordion-modules/iac-dec-com-accordion-two/iac-dec-com-accordion-two/iac-dec-com-accordion-two.component";
+import { IacDecComServiceCodeEnum } from "../../../shared/constants/iac-dec-com-constants";
+import { IacDecComErrorHandlerService } from "../../../shared/services/iac-dec-com-error-handler.service";
+import {
+  IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_ERROR_FORM_MAPPING,
+  IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_ERROR_LIST_MAPPING,
+} from "../../../shared/constants/iac-dec-com-tamm-error-mapping/iac-dec-com-list-error-map";
+import { IacApiBaseResponse } from "projects/atlp-iac-ui/projects/@iac-shared/models/base.response";
+
+@Component({
+  selector: "iac-dec-com-<%=name%>-sidebar",
+  templateUrl: "./iac-dec-com-<%=name%>-sidebar.component.html",
+  styleUrls: ["./iac-dec-com-<%=name%>-sidebar.component.scss"],
+})
+export class IacDecComCom<%=classify(name)%>SideBarComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
+  private _unsubscribeAll$ = new Subject<any>();
+  @ViewChild(AtlpPerfectScrollbarDirective)
+  directiveRef?: AtlpPerfectScrollbarDirective;
+  @ViewChild("sideBarAccordion") accordion: MatAccordion;
+  tammErrorListMapping = IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_ERROR_LIST_MAPPING;
+  tammFormErrorMap: any = IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_ERROR_FORM_MAPPING;
+  tammErrorFormControlMap: any = [];
+  IacSidebarName = IacSidebarName;
+  form: FormGroup;
+  errors = [];
+  isSubmited: boolean = false;
+  currentErrorControl: number = 0;
+  isSuperUser: boolean;
+  draftID: string = "1001";
+  draftObj: any = {};
+  validationErrors: any;
+  selectedLanguage = "en";
+  percentageValue: number;
+
+  /** Get handle on matExpansionPanel tags in the template */
+  @ViewChildren("matExpansionPanelDescriptionRef")
+  matExpansionPanelDescriptionRefs: QueryList<MatExpansionPanelDescription>;
+
+  subscriptions: Subscription[] = [];
+  tammListErrors = [];
+  paymentData: IacDecComPaymentData;
+  isPayAndPrintEnabled: boolean;
+  applicationRefNo: string = "1001";
+  isViewMode: boolean;
+  jobPaymentStatus: string;
+  iacDecComDocInputModel: IacDecComDocInputModel;
+  currentInvalidListNum: number = 0;
+  applicationStatus: string = "PENDING";
+  topLevelProgress: number = 0;
+  accordion_1_progress: number;
+  accordion_2_progress: number;
+  accordion_3_progress: number;
+
+  @ViewChild(IacDecComAccordionOneComponent, { static: true })
+  iacDecComAccordionOneComponentChild: IacDecComAccordionOneComponent;
+
+  @ViewChild(IacDecComAccordionTwoComponent, { static: true })
+  iacDecComAccordionTwoComponentChild: IacDecComAccordionTwoComponent;
+  serviceCode: IacDecComServiceCodeEnum =
+    IacDecComServiceCodeEnum.COM_<%=underscore(name).toUpperCase() %>;
+
+  constructor(
+    private iconsService: IconsService,
+    public atplSidebarService: AtlpSidebarService,
+    private ngxServiceLoader: NgxUiLoaderService,
+    private defaultSnakBar: SnakBarService,
+    public translateService: TranslateService,
+    public portsService: IacAutoCompletePortsService,
+    public ImporterService: IacAutoCompleteImporterService,
+    private iacDecAppDataService: IacDecAppDataService,
+    public iacSlideBarDialogService: AtlpSlideBarDialogService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private _iacDecComSliderUtilService: IacDecComSliderUtilService,
+    private _iacDecComSharedDataService: IacDecComSharedDataService,
+    private _iacDecComProgressBarService: IacDecComProgressBarService,
+    private _iacDecComCommonService: IacDecComCommonService,
+    private _iacDecComErrorHandlerService: IacDecComErrorHandlerService,
+    private _atlpProgressBarService: AtlpProgressBarService,
+    private elementRef: ElementRef
+  ) {
+    this._iacDecComSliderUtilService.setSideBarInitialValues(
+      this,
+      this.iconsService,
+      this.icons
+    );
+  }
+
+  ngOnInit(): void {
+    this.isSuperUser = this.iacDecAppDataService.isSuperUser;
+    this.selectedLanguage = this._iacDecComSharedDataService.selectedLanguage;
+    this._iacDecComSharedDataService.loadLangTranslations(
+      navigationEnglish,
+      navigationArabic
+    );
+    this.initiateChildForms();
+    this.changesForm();
+    this.getDraft();
+  }
+
+  ngOnChanges() {}
+
+  ngAfterViewInit() {
+    if (!this.matExpansionPanelDescriptionRefs) {
+      return;
+    }
+    setTimeout(() => {
+      this._iacDecComSliderUtilService.reCalculateAccordionNumbering(this);
+      this.progressBarCalulation();
+    }, 2000);
+  }
+
+  private initiateChildForms(): void {
+    this.form = new FormGroup({
+      accordion_1: this.iacDecComAccordionOneComponentChild.createForm(),
+      accordion_2: this.iacDecComAccordionTwoComponentChild.createForm(),
+    });
+  }
+
+  get formAccordionOne() {
+    return this.form.get("accordion_1");
+  }
+
+  get formAccordionTwo() {
+    return this.form.get("accordion_2");
+  }
+
+  toggleSidebarOpen(key): void {
+    this.atplSidebarService.getSidebar(key).toggleOpen();
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+    this.accordion.closeAll();
+  }
+
+  progressBarCalulation() {
+    this._iacDecComProgressBarService.setProgressForaccordion(
+      this,
+      "accordion_1_progress",
+      "formAccordionOne"
+    );
+    this._iacDecComProgressBarService.setProgressForaccordion(
+      this,
+      "accordion_2_progress",
+      "formAccordionTwo"
+    );
+    this._iacDecComProgressBarService.setTopLevelProgress(this, [
+      "accordion_1_progress",
+      "accordion_2_progress",
+    ]);
+  }
+
+  private changesForm(): void {
+    this.subscriptions.push(
+      this.form.valueChanges
+        .pipe(
+          distinctUntilChanged(
+            (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+          )
+        )
+        .pipe(takeUntil(this._unsubscribeAll$))
+        .subscribe((newVal) => {
+          this._iacDecComErrorHandlerService.calculateErrors(this, this.form);
+          this.progressBarCalulation();
+        })
+    );
+  }
+
+  scrollToFirstInvalidControl(action) {
+    this._iacDecComErrorHandlerService.scrollToFirstInvalidControl(
+      this,
+      action
+    );
+  }
+
+  scrollToInvalidList(action) {
+    this._iacDecComErrorHandlerService.scrollToInvalidList(this, action);
+  }
+
+  getDraft(): void {
+    this.ngxServiceLoader.start();
+    this.subscriptions.push(
+      this._iacDecComCommonService
+        .getDraft(this.serviceCode, this.draftID)
+        .pipe(takeUntil(this._unsubscribeAll$))
+        .subscribe(
+          (response: IacApiBaseResponse<any>) => {
+            if (response) {
+              // Bind the response
+            }
+            this.ngxServiceLoader.stop();
+          },
+          (error) => {
+            this.defaultSnakBar.error(error);
+            this.ngxServiceLoader.stop();
+          }
+        )
+    );
+  }
+
+  saveDraft(): void {
+    this._iacDecComErrorHandlerService.clearTAMMError(this);
+    if (this.form.invalid) {
+      this.isSubmited = true;
+      this.accordion.openAll();
+      this.scrollToFirstInvalidControl(null);
+      this._iacDecComErrorHandlerService.calculateErrors(this, this.form);
+    } else {
+      this.ngxServiceLoader.start();
+      const payload = {};
+      const isAdd: boolean = this.draftID ? false : true;
+      this.subscriptions.push(
+        this._iacDecComCommonService
+          .saveDraft(payload, this.serviceCode, isAdd)
+          .pipe(takeUntil(this._unsubscribeAll$))
+          .subscribe(
+            (response: IacApiBaseResponse<any>) => {
+              if (response) {
+                const draftObj = response.Data;
+                this._iacDecComErrorHandlerService.updateTAMMErrorMsg([]);
+                let msg =
+                  this.translateService.instant("CreateDraftSuccessMsg") +
+                  " " +
+                  this.translateService.instant("NewDraftMsg") +
+                  draftObj.DraftId;
+
+                this._iacDecComSliderUtilService.displayDialog("success", msg);
+              }
+              this.ngxServiceLoader.stop();
+            },
+            (error) => {
+              this.defaultSnakBar.error(error);
+              this.ngxServiceLoader.stop();
+            }
+          )
+      );
+    }
+  }
+
+  setPaymentData() {
+    this.paymentData = {
+      applicationReferenceNo: this.applicationRefNo,
+      serviceCode: IacDecComServiceCodeEnum.COM_<%=underscore(name).toUpperCase() %>,
+      jobStatus: "PAYMENT_PENDING",
+    };
+    this.isPayAndPrintEnabled = true;
+  }
+
+  checkDocumentsSubmitted() {
+    this.ngxServiceLoader.start();
+    this.checkSubmitDraftEligibility();
+  }
+
+  getApplicationStatus() {
+    this.ngxServiceLoader.start();
+    this.subscriptions.push(
+      this._iacDecComCommonService
+        .getApplicationStatus(this.applicationRefNo)
+        .pipe(takeUntil(this._unsubscribeAll$))
+        .subscribe(
+          (jobStatusResppnse: IacApiBaseResponse<any>) => {
+            const AuthorityStatus = jobStatusResppnse.Data;
+            if (AuthorityStatus) {
+              this.jobPaymentStatus = "payment_pending";
+              let isPayAndPrintEnabled = true;
+              if (isPayAndPrintEnabled) {
+                this.setPaymentData();
+              } else {
+                this.paymentData = null;
+              }
+            }
+            this.ngxServiceLoader.stop();
+          },
+          (error) => {
+            console.log(error);
+            this.ngxServiceLoader.stop();
+          }
+        )
+    );
+  }
+
+  submitDraft() {
+    this.currentInvalidListNum = 0;
+    this.isSubmited = false;
+    this.accordion.openAll();
+    this.ngxServiceLoader.start();
+    const payload = {};
+    this.subscriptions.push(
+      this._iacDecComCommonService
+        .submitDraft(payload, this.serviceCode)
+        .pipe(takeUntil(this._unsubscribeAll$))
+        .subscribe(
+          (response: IacApiBaseResponse<any>) => {
+            this.isSubmited = true;
+            if (response.Success) {
+              this._iacDecComSliderUtilService.displayDialog(
+                "success",
+                "Application submitted successfully."
+              );
+            } else if (response?.Data?.businessValidationErrors) {
+              this.validationErrors = [];
+              this.applicationRefNo = response.Data?.referenceNumber;
+              this.validationErrors = response.Data.businessValidationErrors;
+              this._iacDecComErrorHandlerService.mapErrorsToControls(this);
+              this._iacDecComErrorHandlerService.mapListErrorMsgs(this);
+              setTimeout(() => {
+                this._iacDecComErrorHandlerService.calculateErrors(
+                  this,
+                  this.form
+                );
+                this.changeDetectorRef.markForCheck();
+              }, 1000);
+              this.accordion?.openAll();
+              this.ngxServiceLoader.stop();
+            }
+          },
+          (error) => {
+            this.defaultSnakBar.error(error);
+            this.ngxServiceLoader.stop();
+          }
+        )
+    );
+  }
+
+  getJobStatus() {
+    this.ngxServiceLoader.start();
+    this.subscriptions.push(
+      this._iacDecComCommonService
+        .getJobStatus(this.applicationRefNo)
+        .pipe(takeUntil(this._unsubscribeAll$))
+        .subscribe(
+          (jobStatusResppnse: IacApiBaseResponse<any>) => {
+            this.setPaymentData();
+            this.toggleSidebarOpen(IacSidebarName.iacDecpaymentCheckout);
+            this.ngxServiceLoader.stop();
+          },
+          (error) => {
+            console.log(error);
+            this.ngxServiceLoader.stop();
+          }
+        )
+    );
+  }
+
+  openAttachment(): void {
+    this.isViewMode = this.applicationRefNo ? true : false;
+    this.iacDecComDocInputModel = {
+      serviceCode: IacDecComServiceType.COM_<%=underscore(name).toUpperCase() %>,
+      applicationReferenceNo: this.draftID,
+    };
+    this.toggleSidebarOpen(IacSidebarName.addAttachment);
+  }
+
+  checkSubmitDraftEligibility() {
+    this.ngxServiceLoader.start();
+    const payload = {};
+    this._iacDecComCommonService
+      .checkSubmitDraftEligibility(payload)
+      .pipe(takeUntil(this._unsubscribeAll$))
+      .subscribe(
+        (response: IacApiBaseResponse<any>) => {
+          this.ngxServiceLoader.stop();
+          if (response) {
+            if (response?.Data?.EligibilityStatus) {
+              this.submitDraft();
+            } else {
+              this.ngxServiceLoader.stop();
+              const msg = this.translateService.instant("submitDocMessage");
+              this._iacDecComSliderUtilService.displayDialog("error", msg);
+            }
+          } else {
+            this.ngxServiceLoader.stop();
+            const msg = this.translateService.instant("submitDocMessage");
+            this._iacDecComSliderUtilService.displayDialog("error", msg);
+          }
+        },
+        (error) => {
+          this.ngxServiceLoader.stop();
+          console.error(error);
+        }
+      );
+  }
+
+  notifyAfterSuccessfulPayment(
+    paymentResponse: IacDecpaymentResponseNotifyModel
+  ) {
+    console.log(
+      "notifyAfterSuccessful inside clerence: => \n",
+      JSON.stringify(paymentResponse)
+    );
+    this.toggleSidebarOpen(IacSidebarName.iacDecpaymentCheckout);
+    this.isPayAndPrintEnabled = false;
+    this.getApplicationStatus();
+  }
+
+  private get icons(): Array<string> {
+    return [
+      "save-icon",
+      "succes-form",
+      "close-success",
+      "attach-icon",
+      "payment",
+      "view-charges-icon",
+      "download-icon",
+    ];
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this._unsubscribeAll$.next();
+    this._unsubscribeAll$.complete();
+  }
+}

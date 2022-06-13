@@ -1,0 +1,57 @@
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { IacSharedStoreModule } from "projects/atlp-iac-ui/src/store/iac-shared-store.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
+import { MatIconModule } from "@angular/material/icon";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { AtlpSharedModule } from "projects/@atlp/atlp-shared.module";
+import { AtlpCoreSharedModule } from "projects/@atlp/lib/shared/core-shared.module";
+import { IacSharedModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-shared.module";
+import { AtlpSearchBarModule } from "projects/@atlp/components";
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
+import { TranslateModule } from "@ngx-translate/core";
+import { IacDecCom<%=classify(name)%>TableComponent } from "./components/iac-dec-com-<%=name%>-table.component";
+import { IacSubHeaderModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-sub-header/iac-sub-header.module";
+import { IacDecCom<%=classify(name)%>FilterModule } from "../../filter/iac-dec-com-<%=name%>-filter.module";
+import { AtlpRichClassicTableModule } from "projects/atlp-table/src/public-api";
+import { IacDecCom<%=classify(name)%>TableSectionModule } from "../iac-dec-com-<%=name%>-table-section/iac-dec-com-<%=name%>-table-section.module";
+import { PortalModule } from "@angular/cdk/portal";
+import { IacSinglefileAttachmentModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-file-upload-components/attach-documents/single-file-attachment.module";
+import { IacDecCom<%=classify(name)%>Module } from "../../iac-dec-com-<%=name%>.module";
+
+const IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_TABLE_MODULE_IMPORTS = [
+  CommonModule,
+  FormsModule,
+  ReactiveFormsModule,
+  IacSharedStoreModule,
+  MatTooltipModule,
+  MatTableModule,
+  MatIconModule,
+  FlexLayoutModule,
+  AtlpSharedModule,
+  AtlpCoreSharedModule,
+  IacSinglefileAttachmentModule,
+  IacSharedModule,
+  AtlpSearchBarModule,
+  NgxMaterialTimepickerModule,
+  TranslateModule.forChild(),
+  IacSubHeaderModule,
+  IacDecCom<%=classify(name)%>FilterModule,
+  PortalModule,
+  IacDecCom<%=classify(name)%>Module,
+];
+
+@NgModule({
+  declarations: [IacDecCom<%=classify(name)%>TableComponent],
+  imports: [
+    ...IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_TABLE_MODULE_IMPORTS,
+    AtlpRichClassicTableModule,
+    IacDecCom<%=classify(name)%>TableSectionModule,
+  ],
+  exports: [IacDecCom<%=classify(name)%>TableComponent],
+  entryComponents: [],
+  providers: [],
+})
+export class IacDecCom<%=classify(name)%>TableModule {}

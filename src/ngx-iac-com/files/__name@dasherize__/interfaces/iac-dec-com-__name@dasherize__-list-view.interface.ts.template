@@ -1,0 +1,14 @@
+import { IacDecCom<%=classify(name)%>CardData } from "./iac-dec-com-<%=name%>-card.interface";
+import { IacDecCom<%=classify(name)%>InfoData } from "./iac-dec-com-<%=name%>-info.interface";
+
+export interface IacDecCom<%=classify(name)%>ListViewModel {
+  [x: string]: any;
+  id: number;
+  info: IacDecCom<%=classify(name)%>InfoData;
+  voyageNo: IacDecCom<%=classify(name)%>CardData;
+  masterBL: IacDecCom<%=classify(name)%>CardData;
+  houseBL: IacDecCom<%=classify(name)%>CardData;
+  consignee: IacDecCom<%=classify(name)%>CardData;
+  shipper: IacDecCom<%=classify(name)%>CardData;
+  actions: IacDecCom<%=classify(name)%>CardData;
+}

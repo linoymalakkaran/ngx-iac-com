@@ -1,0 +1,17 @@
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@microsoft/signalr";
+import { Subject } from "rxjs";
+
+@Injectable({
+  providedIn: "root",
+})
+export class IacDecCom<%=classify(name)%>Service {
+  private _unsubscribeAll$ = new Subject<any>();
+
+  constructor(private _httpClient: HttpClient) {}
+
+  ngOnDestroy() {
+    this._unsubscribeAll$.next();
+    this._unsubscribeAll$.complete();
+  }
+}

@@ -1,0 +1,241 @@
+import { SelectionModel } from "@angular/cdk/collections";
+import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource } from "@angular/material/table";
+import { IacDecAppDataService } from "projects/atlp-iac-ui/projects/iac-dec-ui/src/shared/services/dec-app-data.service";
+
+export interface PeriodicElement {
+  number: string;
+  numberOne: string;
+  name: string;
+  port: string;
+  terminal: string;
+  rotation: number;
+  eta: string;
+  etd: string;
+  agent: string;
+  selected: boolean;
+}
+
+const ELEMENT_DATA: PeriodicElement[] = [
+  {
+    number: "FPOD-TXP-0000",
+    numberOne: "22222 2222",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+  {
+    number: "FPOD-TXP-1232",
+    numberOne: "2",
+    name: "Basle Express",
+    port: "Khalifa Port",
+    terminal: "Khalifa terminal",
+    rotation: 367983031,
+    eta: "05/02/2021",
+    etd: "05/02/2021",
+    agent: "ATLP IAC TEAM",
+    selected: false,
+  },
+];
+
+@Component({
+  selector: "iac-dec-com-accordion-three",
+  templateUrl: "./iac-dec-com-accordion-three.component.html",
+  styleUrls: ["./iac-dec-com-accordion-three.component.scss"],
+})
+export class IacDecComAccordionThreeComponent implements AfterViewInit {
+  displayedColumns: string[] = [
+    "select",
+    "number",
+    "name",
+    "port",
+    "terminal",
+    "rotation",
+    "eta",
+    "etd",
+    "agent",
+  ];
+  dataSource = new MatTableDataSource<PeriodicElement>();
+  selection = new SelectionModel<PeriodicElement>(true, []);
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  pageNumber: number = 0;
+  pageSize: number = 5;
+  maxPageSizeForPaginator: number = 5;
+  isSuperUser: boolean;
+  totalItemCount: number = ELEMENT_DATA.length;
+  gridBody: PeriodicElement[] = [...ELEMENT_DATA];
+
+  constructor(private iacDecAppDataService: IacDecAppDataService) {}
+
+  ngOnInit(): void {
+    this.dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
+    this.dataSource.data = ELEMENT_DATA.slice(0, this.pageSize);
+    this.isSuperUser = this.iacDecAppDataService.isSuperUser;
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected(): boolean {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle(): void {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach((row) => this.selection.select(row));
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: PeriodicElement): string {
+    if (!row) {
+      return `${this.isAllSelected() ? "select" : "deselect"} all`;
+    }
+    return `${this.selection.isSelected(row) ? "deselect" : "select"} row ${
+      row.number + 1
+    }`;
+  }
+
+  private SetMatTableData() {
+    const currentPage = this.pageNumber * this.pageSize;
+    this.dataSource.data = [...this.gridBody];
+    this.selection.clear();
+    if (this.dataSource.filteredData.length > 0) {
+      this.dataSource.data = [...this.dataSource.filteredData].slice(
+        currentPage,
+        currentPage + this.pageSize
+      );
+    } else {
+      this.dataSource.data = [...this.gridBody].slice(
+        currentPage,
+        currentPage + this.pageSize
+      );
+    }
+  }
+
+  pageChange(pageModel: any): void {
+    this.pageNumber = pageModel.PageNumber;
+    this.pageSize = pageModel.PageSize;
+    this.SetMatTableData();
+  }
+}

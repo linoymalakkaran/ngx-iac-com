@@ -1,0 +1,49 @@
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import {
+  AtlpGraphResponseModel,
+  IAtlpRichTableMileStoneService,
+} from "projects/atlp-table/src/lib/component/atlp-rich-table-milestone/models/atlp-rich-table-milestone-service.interface";
+import { IacDecSharedApiconfig } from "projects/atlp-iac-ui/projects/iac-dec-ui/src/shared/config/iac-dec-shared.config";
+import { IacDecComSharedDataService } from "../../../../shared/services/iac-dec-com-shared-data.service";
+import { IacDecTransctionAnimationtypes } from "projects/atlp-iac-ui/projects/iac-dec-ui/src/shared/models/iac-dec-type-defs.model";
+
+@Injectable({
+  providedIn: "root",
+})
+export class IacDecCom<%=classify(name)%>RichTableMileStoneService
+  implements IAtlpRichTableMileStoneService
+{
+   iacDecTransctionAnimationtypes: IacDecTransctionAnimationtypes =
+    "COM_<%=underscore(name).toUpperCase() %>";
+
+  constructor(
+    private http: HttpClient,
+    private api: IacDecSharedApiconfig,
+    private iacDecComSharedDataService: IacDecComSharedDataService
+  ) {}
+
+  getGraphData(
+    payload: any,
+    selectedLanguage: string
+  ): Observable<AtlpGraphResponseModel> {
+    return this.iacDecComSharedDataService.getGraphData(
+      payload,
+      selectedLanguage,
+      this.iacDecTransctionAnimationtypes,
+      this.getGraphStepIcons
+    );
+  }
+
+  private getGraphStepIcons(stepIcon): string {
+    switch (stepIcon?.toLowerCase()) {
+      case "draftdate": {
+        return "document-icon";
+      }
+      default: {
+        return "schedule-icon";
+      }
+    }
+  }
+}

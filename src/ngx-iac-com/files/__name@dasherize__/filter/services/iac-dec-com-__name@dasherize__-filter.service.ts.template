@@ -1,0 +1,13 @@
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@microsoft/signalr";
+import { IacDecCom<%=classify(name)%>FilterApiConfig } from "../config/iac-dec-com-<%=name%>.api.config";
+
+@Injectable({
+  providedIn: "root",
+})
+export class IacDecCom<%=classify(name)%>FilterService {
+  constructor(
+    private http: HttpClient,
+    private iacDecCom<%=classify(name)%>FilterApiConfig: IacDecCom<%=classify(name)%>FilterApiConfig
+  ) {}
+}

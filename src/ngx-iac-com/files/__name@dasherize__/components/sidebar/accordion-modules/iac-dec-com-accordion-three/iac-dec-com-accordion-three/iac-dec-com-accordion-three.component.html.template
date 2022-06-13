@@ -1,0 +1,112 @@
+<fieldset
+  class="panel-body form-ref"
+  [disabled]="isSuperUser"
+  [ngClass]="{
+    disabled: isSuperUser
+  }"
+>
+  <div class="panel-row">
+    <div
+      class="appointment-form-wrap py-30 px-30"
+      fxLayout="row wrap"
+      fxLayoutAlign="space-between center"
+    >
+      <div
+        class="field-wrap mb-24 bg"
+        fxFlex="100%"
+        fxFlex.gt-xs="48%"
+        fxFlex.gt-sm="22%"
+        fxLayout="column"
+      >
+        <mat-table [dataSource]="dataSource" class="table bg">
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                [aria-label]="checkboxLabel()"
+              >
+              </mat-checkbox>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <mat-checkbox
+                (click)="$event.stopPropagation()"
+                (change)="$event ? selection.toggle(element) : null"
+                [checked]="selection.isSelected(element)"
+                [aria-label]="checkboxLabel(element)"
+              >
+              </mat-checkbox>
+            </mat-cell>
+          </ng-container>
+          <!-- Position Column -->
+          <ng-container matColumnDef="number">
+            <mat-header-cell *matHeaderCellDef> Voyage Number </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <a href="javascript:void(0)">{{ element.number }}</a>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef> Vessel Name </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <a href="javascript:void(0)"> {{ element.name }} </a>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Weight Column -->
+          <ng-container matColumnDef="port">
+            <mat-header-cell *matHeaderCellDef> Port </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.port }} </mat-cell>
+          </ng-container>
+
+          <!-- Symbol Column -->
+          <ng-container matColumnDef="terminal">
+            <mat-header-cell *matHeaderCellDef> Terminal </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.terminal }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="rotation">
+            <mat-header-cell *matHeaderCellDef> Rotation </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.rotation }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="eta">
+            <mat-header-cell *matHeaderCellDef> ETA/ATA </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.eta }} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="etd">
+            <mat-header-cell *matHeaderCellDef> ETD </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.etd }} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="agent">
+            <mat-header-cell *matHeaderCellDef> Vessel Agent </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element.agent }}
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+        <ng-container *ngIf="totalItemCount > maxPageSizeForPaginator">
+          <iac-mat-pagination
+            class="custom-pagination-appointments"
+            (changePage)="pageChange($event)"
+            [TotalItemCount]="totalItemCount"
+            [PageNumber]="pageNumber"
+            [PageSize]="5"
+          >
+          </iac-mat-pagination>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</fieldset>

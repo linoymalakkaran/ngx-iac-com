@@ -1,0 +1,35 @@
+<fieldset
+  class="panel-body form-ref"
+  [disabled]="isSuperUser"
+  [ngClass]="{
+    disabled: isSuperUser
+  }"
+>
+  <div class="panel-row" [formGroup]="accordion_1">
+    <div
+      class="appointment-form-wrap py-30 px-30"
+      fxLayout="row wrap"
+      fxLayoutAlign="space-between center"
+    >
+      <div
+        class="field-wrap mb-24 bg"
+        fxFlex="100%"
+        fxFlex.gt-xs="48%"
+        fxFlex.gt-sm="22%"
+        fxLayout="column"
+      >
+        <label for="#accordion_one_text" class="field-label required"
+          >Text One</label
+        >
+        <div class="field-input-wrap">
+          <input
+            formControlName="accordion_one_text"
+            type="text"
+            required
+            name="accordion_one_text"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</fieldset>

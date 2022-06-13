@@ -1,0 +1,200 @@
+export const saveDraft = {
+  Data: {
+    DraftId: "84454",
+  },
+  Msg: "Draft Updated successfully",
+  Success: true,
+  Errorlst: null,
+};
+
+export const CheckSubmitDraftEligibility = {
+  Data: {
+    EligibilityStatus: true,
+  },
+  Msg: null,
+  Success: true,
+  Errorlst: null,
+};
+
+export const CreateJobError = {
+  Data: {
+    jobId: null,
+    referenceNumber: null,
+    statusCode: null,
+    statusDescriptionEn: null,
+    statusDescriptionAr: null,
+    error: {
+      errorCode: "Validation Error",
+      errorMessage: "Validation Error",
+    },
+    businessValidationErrors: [
+      {
+        error_code: "INVALID_LOCAL_FACTORY",
+        message_description_en:
+          "Not a Valid Local Factory العميل غير مسجل كمصنع وطني",
+        message_description_ar:
+          "Not a Valid Local Factory العميل غير مسجل كمصنع وطني",
+        attribute_name: "accordion_one_text",
+      },
+      {
+        error_code: "INVALID_LOCAL_FACTORY",
+        message_description_en:
+          "Not a Valid Local Factory العميل غير مسجل كمصنع وطني",
+        message_description_ar:
+          "Not a Valid Local Factory العميل غير مسجل كمصنع وطني",
+        attribute_name: "accordion_two_text",
+      },
+      {
+        error_code: "INVALID_VALUE",
+        message_description_en: "This Value Is Invalid for the Field",
+        message_description_ar: "يجب إدخال قيمة صالحة فى الحقل",
+        attribute_name: "BD_GCC_CNTRY_CODE, INVALID_COUNTRY_2, Row 23",
+      },
+      {
+        error_code: "REQUIRED_FIELD",
+        message_description_en: "You Must Enter A Value in The Field",
+        message_description_ar: "يجب إدخال قيمة فى الحقل",
+        attribute_name: "BH_EXCISE_DECLARATION_ID",
+      },
+      {
+        error_code: "REQUIRED_FIELD",
+        message_description_en: "You Must Enter A Value in The Field",
+        message_description_ar: "يجب إدخال قيمة فى الحقل",
+        attribute_name: "BH_ESMA_REF_NUM",
+      },
+    ],
+    draftData: {
+      cargoType: null,
+      houseBLNumber: null,
+      masterBLNumber: null,
+    },
+    isIdbPaymentRequired: false,
+  },
+  Msg: "Validation Error",
+  Success: false,
+  Errorlst: null,
+};
+
+export const CreateJobSuccess = {
+  Data: {
+    jobId: "20021999",
+    referenceNumber: "REQ_242424",
+    statusCode: "APPROVAL_PENDING",
+    statusDescriptionEn: "",
+    statusDescriptionAr: "",
+    error: {
+      errorCode: null,
+      errorMessage: null,
+    },
+    businessValidationErrors: null,
+    draftData: {
+      cargoType: "G",
+      houseBLNumber: "HBL768",
+      masterBLNumber: "MBL456",
+    },
+    isIdbPaymentRequired: false,
+  },
+  Msg: "Job Created Successfully",
+  Success: true,
+  Errorlst: null,
+};
+
+export const GetJobStatus = {
+  Data: {
+    processResponse: {
+      jobDetails: {
+        jobId: "20021999",
+        declarationStatus: "COMPLETED",
+        approvalStatus: null,
+        failure: null,
+        boe: {
+          customDeclaration: {
+            bar_code: "*000000000000000*",
+            port_type: "sea/ mina khalifa",
+            declatation_type: "Import استيراد",
+            declatation_date: "05/08/2022 14:41:08",
+            declatation_no: "20222101000141",
+            net_weight: "2500  Kgs",
+            gross_weight: "2500  Kgs",
+            measurement: "10",
+            no_of_packages: "100  UNT",
+            marks_number: "",
+            importer_exporter:
+              "983 NATIONAL SHIPPING GULF AGENCY COMPANY ABU DHABI LIMITED -LLC",
+            intercessor_co: "A186  MEDITERRANEAN SHIPPING- L L C",
+            commercial_reg_no: "",
+            exported_to: "ALUMINIUM GLASS MIRRORS",
+            port_of_loading: "BHBAH/BAHRAIN",
+            port_of_discharge: "ABU DHABI ابوظبي",
+            destination: "ABU DHABI ابوظبي",
+            delivery_order_no: "20021999    01-03-2022  338298",
+            carrier_captain_driver: "8139302",
+            carrier_name: "8139302",
+            voyage_flightno: "KM786875688I    17-03-2022 10:45",
+            bL_AWB_no_manif: "MBL456/HBL768\nTEST",
+            invoice_details: {
+              inv: [
+                {
+                  total_duty: "23",
+                  dutyRate: "5",
+                  ciF_localValue: "446",
+                  currency_value: "3.6725",
+                  currency_type: "USD",
+                  foreign_value: "20",
+                  origin: "BEL",
+                  goods_description: "Vacuum flasks for tea or coffee",
+                  hs_code: "96170010",
+                },
+                {
+                  total_duty: "0",
+                  dutyRate: "0",
+                  ciF_localValue: "212",
+                  currency_value: "3.6725",
+                  currency_type: "USD",
+                  foreign_value: "50",
+                  origin: "DEU",
+                  goods_description: "Rabbits and hares",
+                  hs_code: "01061400",
+                },
+              ],
+            },
+            custom_restrictions: {
+              cr: {
+                release_reference: "RED",
+                agency: "",
+              },
+            },
+            exemption_of_duty: null,
+            clearing_agent: "C031  المزروعي للشحن الدولي - ميكو",
+            licence_number: "",
+            reason_for_not_releasing: "",
+            other_remarks: "CIF              656  Dhs",
+            release_date: "08-05-2022 14:44",
+            exit_port: "",
+            duty: {
+              total_duty: "23",
+              vat: "34",
+              excise_tax: "0",
+              handling: "0",
+              storage: "0",
+              other_changes: "115",
+              definite: "138",
+              insured: "0",
+            },
+            payment_method: {
+              voucher_no: "2210427329 CR , 2210427330 CR",
+              voucher_date: "05/08/2022 14:43:31",
+            },
+          },
+        },
+        remoteFault: {
+          error: "",
+          description: "",
+        },
+      },
+    },
+  },
+  Msg: "Data retrieved successfully",
+  Success: true,
+  Errorlst: null,
+};

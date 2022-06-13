@@ -1,0 +1,11 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "ngx-iac-com": {
+      "description": "It is an anglar custom schematics, allow you to scaffold main files for any module in less time and efforts.",
+      "factory": "./ngx-iac-com/index#ngxIacCom",
+      "schema": "./ngx-iac-com/schema.json",
+      "aliases": ["ngxIacCom"]
+    }
+  }
+}

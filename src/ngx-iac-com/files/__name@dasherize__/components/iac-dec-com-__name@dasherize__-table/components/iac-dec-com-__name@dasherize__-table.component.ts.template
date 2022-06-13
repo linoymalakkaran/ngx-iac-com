@@ -1,0 +1,331 @@
+import { BreakpointObserver } from "@angular/cdk/layout";
+import { CdkPortal, ComponentPortal } from "@angular/cdk/portal";
+import {
+  Component,
+  Injector,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
+import { MatTableDataSource } from "@angular/material/table";
+import { AtlpSidebarService } from "projects/@atlp/components/sidebar/sidebar.service";
+import { IconsService } from "projects/@atlp/services/icons.service";
+import { AtlpTranslationService } from "projects/@atlp/services/app-translation.service";
+import { locale as navigationEnglish } from "../../../i18n/en";
+import { locale as navigationArabic } from "../../../i18n/ae";
+import { TranslateService } from "@ngx-translate/core";
+import {
+  atlpRichClassicTableAddColumnsListenerTableModeDrag,
+  atlpRichClassicTableCreateTableModeSelectionDrag,
+} from "projects/atlp-table/src/lib/models/atlp-rich-classic-table-builder";
+
+import { AtlpRichClassicTableModeSelectionDrag } from "projects/atlp-table/src/lib/models/atlp-table-constructor/atlp-rich-classic-table-mode-selection-drag";
+import { AtlpRichClassicTableMode } from "projects/atlp-table/src/lib/models/atlp-rich-classic-table-enum";
+import { AtlpRichClassicTransTablePortalBridgeService } from "projects/atlp-table/src/lib/services/atlp-rich-classic-bridge.service";
+import { Subject, Subscription } from "rxjs";
+import { atlpRichClassicTableBreakpointsListenerDefault } from "projects/atlp-table/src/lib/models/atlp-rich-classic-table-breakpoint.model";
+import { AtlpMileStoneBridgePortalService } from "projects/atlp-table/src/lib/component/atlp-rich-table-milestone/services/atlp-rich-table-milestone-bridge.service";
+import { IacSidebarName } from "projects/atlp-iac-ui/projects/@iac-shared/models/enums/sidebar-name.enum";
+import { IacFilterKey } from "projects/atlp-iac-ui/projects/@iac-shared/models/enums/filter-name.enum";
+import { IacDecCom<%=classify(name)%>ListViewModel } from "../../../interfaces/iac-dec-com-<%=name%>-list-view.interface";
+import { IacDecCom<%=classify(name)%>InfoComponent } from "../../iac-dec-com-<%=name%>-table-section/components/iac-dec-com-<%=name%>-info/iac-dec-com-<%=name%>-info.component";
+import { IacDecCom<%=classify(name)%>CardComponent } from "../../iac-dec-com-<%=name%>-table-section/components/iac-dec-com-<%=name%>-card/iac-dec-com-<%=name%>-card.component";
+import { IacDecCom<%=classify(name)%>ColumnsDef } from "../../../models/iac-dec-com-<%=name%>-columns-def";
+import {
+  atlpDefaultPaginatorData,
+  IAtlpInputPaginator,
+  IAtlpPageResponseModel,
+} from "projects/@atlp/components/atlp-pagination/models/altp-paginator.model";
+import { IacDecCom<%=classify(name)%>FilterComponent } from "../../../filter/components/iac-dec-com-<%=name%>-filter-content.component";
+import { IacDecCom<%=classify(name)%>RichTableMileStoneService } from "../services/iac-dec-com-<%=name%>-rich-table-milestone.service";
+import { IacDecCom<%=classify(name)%>TableDataService } from "../services/iac-dec-com-<%=name%>-table-data.service";
+import { IacUserAccountInfoService } from "projects/atlp-iac-ui/projects/@iac-shared/services/user-account.service";
+import { IacUserAccountInfo } from "projects/atlp-iac-ui/projects/@iac-shared/models/IUserAccountInfo";
+import { AtlpTableConfig } from "projects/atlp-table/src/lib/component/atlp-rich-table-milestone/models/atlp-table-config";
+import {
+  AtlpRichClassicTableEmitElInfoTable,
+  AtlpRichClassicTableEmitElTable,
+} from "projects/atlp-table/src/lib/models/atlp-rich-classic-table-interfaces";
+import { IacDecCom<%=classify(name)%>ApiConfig } from "../../../configs/iac-dec-com-<%=name%>-api.config";
+import { IacCheckHelper } from "projects/atlp-iac-ui/projects/@iac-shared/helper/check";
+import { ATLP_PORTAL_TABLE_DATA } from "projects/atlp-table/src/lib/injectors/atlp-table-portal.injector";
+import { debounceTimeDecorator } from "projects/atlp-iac-ui/projects/@iac-shared/decorators/function-decorator";
+import { IacDecComFilterService } from "../../../../shared/services/iac-dec-com-filter.service";
+import { IacDecComShareApiConfig } from "../../../../shared/config/iac-dec-com-shared.config";
+import { HttpClient } from "@angular/common/http";
+import { SnakBarService } from "projects/@atlp/components/snak-bars/service/snak-bar-default.component";
+import { takeUntil } from "rxjs/operators";
+import { IacDecFilterType } from "projects/atlp-iac-ui/projects/@iac-shared/iac-filters/interfaces/savedFilter";
+
+@Component({
+  selector: "iac-dec-com-<%=name%>-table",
+  templateUrl: "./iac-dec-com-<%=name%>-table.component.html",
+  styleUrls: ["./iac-dec-com-<%=name%>-table.component.scss"],
+})
+export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDestroy {
+  subscriptions: Subscription[] = [];
+  Com<%=classify(name)%>CardComponent: ComponentPortal<IacDecCom<%=classify(name)%>CardComponent>[] =
+    [];
+  Com<%=classify(name)%>InfoComponent: ComponentPortal<IacDecCom<%=classify(name)%>InfoComponent>[] =
+    [];
+  table: AtlpRichClassicTableModeSelectionDrag<IacDecCom<%=classify(name)%>ListViewModel> =
+    atlpRichClassicTableCreateTableModeSelectionDrag<IacDecCom<%=classify(name)%>ListViewModel>(
+      new MatTableDataSource([]),
+      IacDecCom<%=classify(name)%>ColumnsDef,
+      AtlpRichClassicTableMode.rich
+    );
+  typeViewBasic: boolean;
+  showFilters: boolean;
+  unsubscribeListenerColumns$ = new Subject<never>();
+  private _unsubscribeAll$ = new Subject<never>();
+  _injector: Injector;
+  tablePaginator: IAtlpInputPaginator = {
+    ...atlpDefaultPaginatorData,
+  };
+  @ViewChild(CdkPortal, { static: true })
+  portalActionContent: CdkPortal;
+  atlpCom<%=classify(name)%>TableConfig: AtlpTableConfig = {
+    name: "atlpCom<%=classify(name)%>Table",
+    className: "atlpCom<%=classify(name)%>Table",
+  };
+  public allowedFileTypes = ["txt"];
+  public maxContainerFileUploadSize: number = 10;
+  public containerUploadUrl: string;
+  public chassisUploadErrors: any = [];
+  userInfo: IacUserAccountInfo;
+  selectedLanguage = "en";
+  SidebarName = IacSidebarName;
+  IacFilterKey = IacFilterKey;
+  @ViewChild(IacDecCom<%=classify(name)%>FilterComponent)
+  com<%=classify(name)%>Filter: IacDecCom<%=classify(name)%>FilterComponent;
+  userAccountInfo: any;
+  centerCodeList: any[];
+  selectedCenter: any;
+  selectedCenterCode: any;
+  superUser: boolean;
+  centerCodeObj: any = {};
+  selectedRow: AtlpRichClassicTableEmitElTable<any>;
+  IacDecComFilterType: IacDecFilterType = "COM_<%=underscore(name).toUpperCase() %>_FILTER";
+  iacDecComFilterService: IacDecComFilterService = new IacDecComFilterService(
+    this._httpClient,
+    this._iacDecComShareApiConfig,
+    this._defaultSnakBar,
+    this.IacDecComFilterType.toString()
+  );
+
+  constructor(
+    public _atplSidebarService: AtlpSidebarService,
+    private _breakpointObserver: BreakpointObserver,
+    private _iconsService: IconsService,
+    private _atlpRichClassicTransTablePortalBridgeService: AtlpRichClassicTransTablePortalBridgeService,
+    public _com<%=classify(name)%>RichTableMileStoneService: IacDecCom<%=classify(name)%>RichTableMileStoneService,
+    private _atlpMileStoneBridgePortalService: AtlpMileStoneBridgePortalService,
+    private _com<%=classify(name)%>TableDataService: IacDecCom<%=classify(name)%>TableDataService,
+    private _com<%=classify(name)%>DataService: IacDecCom<%=classify(name)%>TableDataService,
+    public _userAccountInfoService: IacUserAccountInfoService,
+    private _atlpTranslationService: AtlpTranslationService,
+    public _translateService: TranslateService,
+    private _iacDecComShareApiConfig: IacDecComShareApiConfig,
+    private _httpClient: HttpClient,
+    private _defaultSnakBar: SnakBarService
+  ) {
+    this._iconsService.registerIcons(this.icons);
+  }
+
+  ngOnInit(): void {
+    this._atlpMileStoneBridgePortalService.setAtlpRichTableMileStoneActionPortal(
+      this.portalActionContent
+    );
+    atlpRichClassicTableAddColumnsListenerTableModeDrag<IacDecCom<%=classify(name)%>ListViewModel>(
+      this.table,
+      atlpRichClassicTableBreakpointsListenerDefault,
+      this._breakpointObserver,
+      this._unsubscribeAll$,
+      this.unsubscribeListenerColumns$
+    );
+    this.subscriptions.push(
+      this._atlpTranslationService
+        .getCurrentLanguage()
+        .pipe(takeUntil(this._unsubscribeAll$))
+        .subscribe((lang) => {
+          this.selectedLanguage = lang;
+          this._atlpTranslationService.setDefaultLanguageSettings(
+            this.selectedLanguage,
+            navigationEnglish,
+            navigationArabic
+          );
+        })
+    );
+  }
+
+  toggleSidebarOpen(key): void {
+    if (key) {
+      this._atplSidebarService.getSidebar(key).toggleOpen();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.updateTableDataAndTemplate(0, 10);
+  }
+
+  updateTableDataAndTemplate(currentPage, pageSize) {
+    this.subscriptions.push(
+      this._com<%=classify(name)%>TableDataService.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$.pipe(
+        takeUntil(this._unsubscribeAll$)
+      ).subscribe((Com<%=classify(name)%>_data) => {
+        if (IacCheckHelper.isArray(Com<%=classify(name)%>_data)) {
+          this.setPortalDataAndComponentPortals(
+            Com<%=classify(name)%>_data,
+            currentPage,
+            pageSize
+          );
+        }
+      })
+    );
+    const payload = {};
+    this._com<%=classify(name)%>DataService.searchTableData(payload);
+  }
+
+  private setPortalDataAndComponentPortals(
+    Com<%=classify(name)%>_data: any,
+    currentPage: any,
+    pageSize: any
+  ) {
+    this.Com<%=classify(name)%>CardComponent = [];
+    this.Com<%=classify(name)%>InfoComponent = [];
+    if (Com<%=classify(name)%>_data.length > 0) {
+      Com<%=classify(name)%>_data.forEach((Com<%=classify(name)%>Item) => {
+        this.Com<%=classify(name)%>CardComponent.push(
+          this.attachCardPortal(Com<%=classify(name)%>Item)
+        );
+        this.Com<%=classify(name)%>InfoComponent.push(
+          this.attachInfoPortal(Com<%=classify(name)%>Item)
+        );
+      });
+    }
+
+    this._atlpRichClassicTransTablePortalBridgeService.setAtlpRichCardTemplate(
+      this.Com<%=classify(name)%>CardComponent
+    );
+
+    this._atlpRichClassicTransTablePortalBridgeService.setAtlpRichInfoTemplate(
+      this.Com<%=classify(name)%>InfoComponent
+    );
+
+    this.table.dataSource.data = [...Com<%=classify(name)%>_data];
+    this.tablePaginator.totalCount = Com<%=classify(name)%>_data.length;
+    this.tablePaginator = { ...this.tablePaginator };
+  }
+
+  attachInfoPortal(Com<%=classify(name)%>InfoData) {
+    const componentPortal = new ComponentPortal(
+      IacDecCom<%=classify(name)%>InfoComponent,
+      null,
+      this.createInjector({
+        Com<%=classify(name)%>InfoData: Com<%=classify(name)%>InfoData,
+      })
+    );
+    return componentPortal;
+  }
+
+  attachCardPortal(cardData) {
+    const componentPortal = new ComponentPortal(
+      IacDecCom<%=classify(name)%>CardComponent,
+      null,
+      this.createInjector({ cardData: cardData })
+    );
+    return componentPortal;
+  }
+
+  private createInjector(data: any): Injector {
+    return Injector.create({
+      providers: [{ provide: ATLP_PORTAL_TABLE_DATA, useValue: data }],
+    });
+  }
+
+  clickedRow(event: AtlpRichClassicTableEmitElTable): void {
+    // console.log(event);
+    this.selectedRow = event;
+    if (event?.data) {
+    }
+  }
+
+  clickedCell(event: AtlpRichClassicTableEmitElTable): void {
+    // console.log(event);
+  }
+
+  onClickedInfo(event: AtlpRichClassicTableEmitElInfoTable): void {
+    // console.log(event);
+  }
+
+  onClickedInfoSelection(
+    userSelectedInfo: AtlpRichClassicTableEmitElInfoTable
+  ): void {
+    console.log(userSelectedInfo);
+  }
+
+  onSwitchView(): void {
+    this.typeViewBasic = !this.typeViewBasic;
+    if (this.table.modeIsRich) {
+      this.table.changeTableMode(AtlpRichClassicTableMode.rolled);
+    } else {
+      this.table.changeTableMode(AtlpRichClassicTableMode.rich);
+    }
+  }
+
+  onValChange(value = null): void {
+    if (value) {
+      this.table.changeTableMode(value);
+    }
+  }
+
+  onPageChange(paginationResult: IAtlpPageResponseModel) {
+    const currentPage =
+      (paginationResult.currentPage - 1) * paginationResult.pageSize;
+    this.tablePaginator.currentPage = currentPage;
+    this.tablePaginator.pageSize = currentPage + paginationResult.pageSize;
+    const payload: any = {
+      SKIP: currentPage,
+      TAKE: currentPage + paginationResult.pageSize,
+    };
+    this._com<%=classify(name)%>TableDataService.searchTableData(payload);
+  }
+
+  @debounceTimeDecorator(1000, 1000)
+  search(searchWord) {
+    const wildCardSearch = searchWord.trim();
+    const payload: any = {
+      searchText: wildCardSearch,
+      SKIP: 0,
+      TAKE: 10,
+    };
+    this._com<%=classify(name)%>TableDataService.searchTableData(payload);
+  }
+
+  private get icons(): Array<string> {
+    return [
+      "close-white-icon",
+      "soc-icon",
+      "mob-open-menu",
+      "plus-white",
+      "table-icon-one",
+      "table-icon-two",
+      "smock-icon",
+      "print-black",
+      "copy-black",
+      "sort-ascending-fill",
+      "x-fill-purple-dark",
+      "expand_less",
+      "expand_more",
+      "warning-circle-fill",
+      "attachment",
+      "upload",
+    ];
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this._unsubscribeAll$.next();
+    this._unsubscribeAll$.complete();
+  }
+}

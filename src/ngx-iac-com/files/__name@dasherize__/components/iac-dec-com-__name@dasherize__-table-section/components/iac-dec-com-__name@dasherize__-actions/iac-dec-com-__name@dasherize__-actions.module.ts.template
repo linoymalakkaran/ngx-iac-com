@@ -1,0 +1,21 @@
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AtlpSharedModule } from "projects/@atlp/atlp-shared.module";
+import { AtlpCoreSharedModule } from "projects/@atlp/lib/shared/core-shared.module";
+import { TranslateModule } from "@ngx-translate/core";
+import { IacDecCom<%=classify(name)%>ActionsComponent } from "./components/iac-dec-com-<%=name%>-actions.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+
+@NgModule({
+  declarations: [IacDecCom<%=classify(name)%>ActionsComponent],
+  imports: [
+    CommonModule,
+    AtlpSharedModule,
+    AtlpCoreSharedModule,
+    TranslateModule,
+    MatTooltipModule,
+  ],
+  exports: [IacDecCom<%=classify(name)%>ActionsComponent],
+  entryComponents: [IacDecCom<%=classify(name)%>ActionsComponent],
+})
+export class IacDecCom<%=classify(name)%>ActionsModule {}

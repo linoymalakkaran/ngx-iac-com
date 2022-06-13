@@ -1,0 +1,66 @@
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { IacDecCom<%=classify(name)%>RoutingModule } from "./iac-dec-com-<%=name%>-routing.module";
+import { PortalModule } from "@angular/cdk/portal";
+import { TranslateModule } from "@ngx-translate/core";
+import { AtlpSharedModule } from "projects/@atlp/atlp-shared.module";
+import { AtlpPaginationModule } from "projects/@atlp/components/atlp-pagination/atlp-pagination.module";
+import { AtlpCoreSharedModule } from "projects/@atlp/lib/shared/core-shared.module";
+import { IacSharedModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-shared.module";
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MdePopoverModule } from "@material-extended/mde";
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
+import { AtlpSearchBarModule } from "projects/@atlp/components";
+import { AtlpPaymentModule } from "projects/@atlp/components/atlp-payment/atlp-payment.module";
+import { IacFiltersModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-filters/iac-filters.module";
+import { IacSubHeaderModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-sub-header/iac-sub-header.module";
+import { IacSharedStoreModule } from "projects/atlp-iac-ui/src/store/iac-shared-store.module";
+import { IacDecTransAnimationModule } from "../../../shared/iac-dec-trans-animation/iac-dec-trans-animation.module";
+import { IacDecComAccordionOneModule } from "./components/sidebar/accordion-modules/iac-dec-com-accordion-one/iac-dec-com-accordion-one.module";
+import { IacDecComAccordionThreeModule } from "./components/sidebar/accordion-modules/iac-dec-com-accordion-three/iac-dec-com-accordion-three.module";
+import { IacDecComAccordionTwoModule } from "./components/sidebar/accordion-modules/iac-dec-com-accordion-two/iac-dec-com-accordion-two.module";
+import { IacDecComCom<%=classify(name)%>SideBarComponent } from "./components/sidebar/iac-dec-com-<%=name%>-sidebar.component";
+import { IacDecComSharedModule } from "../shared/iac-dec-com-shared.module";
+import { IacDecCom<%=classify(name)%>RichTableMileStoneService } from "./components/iac-dec-com-<%=name%>-table/services/iac-dec-com-<%=name%>-rich-table-milestone.service";
+
+@NgModule({
+  declarations: [IacDecComCom<%=classify(name)%>SideBarComponent],
+  imports: [
+    CommonModule,
+    IacDecCom<%=classify(name)%>RoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IacSharedStoreModule,
+    MatTooltipModule,
+    AtlpSharedModule,
+    AtlpCoreSharedModule,
+    IacSharedModule,
+    AtlpSearchBarModule,
+    AtlpPaymentModule,
+    NgxMaterialTimepickerModule,
+    IacFiltersModule,
+    TranslateModule,
+    AtlpPaginationModule,
+    IacSubHeaderModule,
+    IacDecTransAnimationModule,
+    MdePopoverModule,
+    DragDropModule,
+    PortalModule,
+    IacDecComAccordionTwoModule,
+    IacDecComAccordionThreeModule,
+    IacDecComAccordionOneModule,
+    IacDecComSharedModule,
+  ],
+  exports: [
+    IacDecComCom<%=classify(name)%>SideBarComponent,
+    IacDecComAccordionThreeModule,
+    IacDecComAccordionOneModule,
+    IacDecComSharedModule,
+  ],
+  providers: [
+    IacDecCom<%=classify(name)%>RichTableMileStoneService,
+  ],
+})
+export class IacDecCom<%=classify(name)%>Module {}

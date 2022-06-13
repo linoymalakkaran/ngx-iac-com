@@ -1,0 +1,27 @@
+import { Component, OnInit } from "@angular/core";
+import { FormGroup, FormControl } from "@angular/forms";
+import { IacDecAppDataService } from "projects/atlp-iac-ui/projects/iac-dec-ui/src/shared/services/dec-app-data.service";
+
+@Component({
+  selector: "iac-dec-com-accordion-two",
+  templateUrl: "./iac-dec-com-accordion-two.component.html",
+  styleUrls: ["./iac-dec-com-accordion-two.component.scss"],
+})
+export class IacDecComAccordionTwoComponent implements OnInit {
+  accordion_2: FormGroup;
+  isSuperUser: boolean;
+
+  constructor(private iacDecAppDataService: IacDecAppDataService) {}
+
+  ngOnInit(): void {
+    this.isSuperUser = this.iacDecAppDataService.isSuperUser;
+  }
+
+  createForm() {
+    this.accordion_2 = new FormGroup({
+      accordion_two_text: new FormControl(null),
+    });
+
+    return this.accordion_2;
+  }
+}

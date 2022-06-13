@@ -1,0 +1,7 @@
+@import "projects/@atlp/scss/variables";
+
+::ng-deep {
+  iac-dec-com-<%=name%>-card {
+    width: 100%;
+  }
+}

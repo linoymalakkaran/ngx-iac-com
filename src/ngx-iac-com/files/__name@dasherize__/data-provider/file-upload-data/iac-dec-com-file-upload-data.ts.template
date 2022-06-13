@@ -1,0 +1,360 @@
+export const GetServiceAttachmentsRevised = {
+  Data: {
+    GetServiceAttachmentsCBMResp: {
+      CBMBody: {
+        StatusCode: "1",
+        Documents: {
+          Document: [
+            {
+              DocumentCode: 2,
+              Code: "أخرى-Others",
+              NameEnglish: "Others",
+              NameArabic: "أخرى",
+              DocumentName: [
+                {
+                  Language: "English",
+                  Description: "Others",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "أخرى",
+                },
+              ],
+              DocumentHelp: [
+                {
+                  Language: "English",
+                  Description: "Others",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "أخرى",
+                },
+              ],
+              Required: false,
+              PdfAllowed: true,
+              ImageAllowed: false,
+              ExcelAllowed: false,
+              DocumentStatusDescription: [
+                {
+                  Language: "English",
+                  Description: "",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "",
+                },
+              ],
+              documentCount: 6,
+              isTraDoc: false,
+            },
+            {
+              DocumentCode: 3,
+              Code: "بوليصة-BL",
+              NameEnglish: "BL",
+              NameArabic: "بوليصة",
+              DocumentName: [
+                {
+                  Language: "English",
+                  Description: "BL",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "بوليصة",
+                },
+              ],
+              DocumentHelp: [
+                {
+                  Language: "English",
+                  Description: "Bill",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "بوليصة",
+                },
+              ],
+              Required: true,
+              PdfAllowed: true,
+              ImageAllowed: false,
+              ExcelAllowed: false,
+              DocumentStatusDescription: [
+                {
+                  Language: "English",
+                  Description: "",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "",
+                },
+              ],
+              documentCount: 1,
+              isTraDoc: true,
+            },
+            {
+              DocumentCode: 4,
+              Code: "شهادة منشأ-Cert Of Origin",
+              NameEnglish: "Cert Of Origin",
+              NameArabic: "شهادة منشأ",
+              DocumentName: [
+                {
+                  Language: "English",
+                  Description: "Cert Of Origin",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "شهادة منشأ",
+                },
+              ],
+              DocumentHelp: [
+                {
+                  Language: "English",
+                  Description: "Cert of origin",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "شهادة منشأ",
+                },
+              ],
+              Required: false,
+              PdfAllowed: true,
+              ImageAllowed: true,
+              ExcelAllowed: true,
+              DocumentStatusDescription: [
+                {
+                  Language: "English",
+                  Description: "",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "",
+                },
+              ],
+              documentCount: 1,
+              isTraDoc: false,
+            },
+            {
+              DocumentCode: 1,
+              Code: "الجميع-All",
+              NameEnglish: "All",
+              NameArabic: "الجميع",
+              DocumentName: [
+                {
+                  Language: "English",
+                  Description: "All",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "الجميع",
+                },
+              ],
+              DocumentHelp: [
+                {
+                  Language: "English",
+                  Description: "ALL",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "الكل",
+                },
+              ],
+              Required: false,
+              PdfAllowed: true,
+              ImageAllowed: true,
+              ExcelAllowed: true,
+              DocumentStatusDescription: [
+                {
+                  Language: "English",
+                  Description: "",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "",
+                },
+              ],
+              documentCount: 1,
+              isTraDoc: false,
+            },
+            {
+              DocumentCode: 6,
+              Code: "قائمة تحميل-Pack List",
+              NameEnglish: "Pack List",
+              NameArabic: "قائمة تحميل",
+              DocumentName: [
+                {
+                  Language: "English",
+                  Description: "Pack List",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "قائمة تحميل",
+                },
+              ],
+              DocumentHelp: [
+                {
+                  Language: "English",
+                  Description: "Pack List",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "قائمة التحميل",
+                },
+              ],
+              Required: false,
+              PdfAllowed: true,
+              ImageAllowed: true,
+              ExcelAllowed: true,
+              DocumentStatusDescription: [
+                {
+                  Language: "English",
+                  Description: "",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "",
+                },
+              ],
+              documentCount: 1,
+              isTraDoc: true,
+            },
+            {
+              DocumentCode: 5,
+              Code: "فاتورة-Inv",
+              NameEnglish: "Inv",
+              NameArabic: "فاتورة",
+              DocumentName: [
+                {
+                  Language: "English",
+                  Description: "Inv",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "فاتورة",
+                },
+              ],
+              DocumentHelp: [
+                {
+                  Language: "English",
+                  Description: "Invoice",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "فاتورة",
+                },
+              ],
+              Required: false,
+              PdfAllowed: true,
+              ImageAllowed: true,
+              ExcelAllowed: true,
+              DocumentStatusDescription: [
+                {
+                  Language: "English",
+                  Description: "",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "",
+                },
+              ],
+              documentCount: 1,
+              isTraDoc: true,
+            },
+            {
+              DocumentCode: 5,
+              Code: "LetterFromOrganizationDoc",
+              NameEnglish: "Letter From Organization Doc",
+              NameArabic: "خطاب من المنظمة ",
+              DocumentName: [
+                {
+                  Language: "English",
+                  Description: "Letter From Organization Doc",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "خطاب من المنظمة ",
+                },
+              ],
+              DocumentHelp: [
+                {
+                  Language: "English",
+                  Description: "Letter From Organization Doc",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "خطاب من المنظمة ",
+                },
+              ],
+              Required: false,
+              PdfAllowed: true,
+              ImageAllowed: false,
+              ExcelAllowed: false,
+              DocumentStatusDescription: [
+                {
+                  Language: "English",
+                  Description: "",
+                },
+                {
+                  Language: "Arabic",
+                  Description: "",
+                },
+              ],
+              documentCount: 1,
+              isTraDoc: true,
+            },
+          ],
+        },
+      },
+    },
+  },
+  Msg: null,
+  Success: true,
+  Errorlst: null,
+};
+
+export const GetDocumentListRevised = {
+  Data: [
+    {
+      ID: "aadab75f-b845-49b9-a103-8773f7ba51c1",
+      Name: "sample-pdf-file.pdf",
+      MimeType: "application/pdf",
+      DocumentType: "شهادة منشأ-Cert Of Origin",
+      ModuleID: "13",
+      SubModuleID: "13",
+    },
+    {
+      ID: "ee97952d-db0d-48a6-8983-5291d8a6ce87",
+      Name: "BILL (13) - Copy.pdf",
+      MimeType: "application/pdf",
+      DocumentType: "أخرى-Others",
+      ModuleID: "13",
+      SubModuleID: "13",
+    },
+  ],
+  Msg: null,
+  Success: true,
+  Errorlst: null,
+};
+
+export const SaveSubmitDocument = {
+  Data: "6eab12c8-a112-43dc-a6ca-923cea5db405",
+  Msg: "Document submitted successfully",
+  Success: true,
+  Errorlst: null,
+};
+
+export const RemoveDocument_Revised = {
+  Data: {
+    deleteDocumentByIdResponse: {
+      wsResponse: {
+        methodResponse: "Success",
+        methodResponseCode: 200,
+        methodResponseDescription:
+          "Document with ID aadab75f-b845-49b9-a103-8773f7ba51c1 has been deleted successfully",
+        docId: "aadab75f-b845-49b9-a103-8773f7ba51c1",
+      },
+    },
+    exception: null,
+    statusCode: "1",
+  },
+  Msg: "Document deleted successfully",
+  Success: true,
+  Errorlst: null,
+};
