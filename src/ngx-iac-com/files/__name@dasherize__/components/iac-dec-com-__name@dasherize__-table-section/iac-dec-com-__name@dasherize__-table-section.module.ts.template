@@ -13,13 +13,11 @@ import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { TranslateModule } from "@ngx-translate/core";
 import { IacDecCom<%=classify(name)%>CardComponent } from "./components/iac-dec-com-<%=name%>-card/iac-dec-com-<%=name%>-card.component";
 import { IacDecCom<%=classify(name)%>InfoComponent } from "./components/iac-dec-com-<%=name%>-info/iac-dec-com-<%=name%>-info.component";
-import { IacDecCom<%=classify(name)%>StatusComponent } from "./components/iac-dec-com-<%=name%>-status/iac-dec-com-<%=name%>-status.component";
 import { IacDecCom<%=classify(name)%>ActionsModule } from "./components/iac-dec-com-<%=name%>-actions/iac-dec-com-<%=name%>-actions.module";
 
 const IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_TABLE_SECTION_MODULE_DECLARATIONS = [
   IacDecCom<%=classify(name)%>CardComponent,
   IacDecCom<%=classify(name)%>InfoComponent,
-  IacDecCom<%=classify(name)%>StatusComponent,
 ];
 
 @NgModule({

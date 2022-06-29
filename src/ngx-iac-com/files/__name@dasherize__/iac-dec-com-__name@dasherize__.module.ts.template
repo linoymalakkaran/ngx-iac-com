@@ -18,9 +18,6 @@ import { IacFiltersModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-
 import { IacSubHeaderModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-sub-header/iac-sub-header.module";
 import { IacSharedStoreModule } from "projects/atlp-iac-ui/src/store/iac-shared-store.module";
 import { IacDecTransAnimationModule } from "../../../shared/iac-dec-trans-animation/iac-dec-trans-animation.module";
-import { IacDecComAccordionOneModule } from "./components/sidebar/accordion-modules/iac-dec-com-accordion-one/iac-dec-com-accordion-one.module";
-import { IacDecComAccordionThreeModule } from "./components/sidebar/accordion-modules/iac-dec-com-accordion-three/iac-dec-com-accordion-three.module";
-import { IacDecComAccordionTwoModule } from "./components/sidebar/accordion-modules/iac-dec-com-accordion-two/iac-dec-com-accordion-two.module";
 import { IacDecComCom<%=classify(name)%>SideBarComponent } from "./components/sidebar/iac-dec-com-<%=name%>-sidebar.component";
 import { IacDecComSharedModule } from "../shared/iac-dec-com-shared.module";
 import { IacDecCom<%=classify(name)%>RichTableMileStoneService } from "./components/iac-dec-com-<%=name%>-table/services/iac-dec-com-<%=name%>-rich-table-milestone.service";
@@ -48,19 +45,9 @@ import { IacDecCom<%=classify(name)%>RichTableMileStoneService } from "./compone
     MdePopoverModule,
     DragDropModule,
     PortalModule,
-    IacDecComAccordionTwoModule,
-    IacDecComAccordionThreeModule,
-    IacDecComAccordionOneModule,
     IacDecComSharedModule,
   ],
-  exports: [
-    IacDecComCom<%=classify(name)%>SideBarComponent,
-    IacDecComAccordionThreeModule,
-    IacDecComAccordionOneModule,
-    IacDecComSharedModule,
-  ],
-  providers: [
-    IacDecCom<%=classify(name)%>RichTableMileStoneService,
-  ],
+  exports: [IacDecComCom<%=classify(name)%>SideBarComponent, IacDecComSharedModule],
+  providers: [IacDecCom<%=classify(name)%>RichTableMileStoneService],
 })
 export class IacDecCom<%=classify(name)%>Module {}

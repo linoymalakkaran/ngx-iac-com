@@ -1,24 +1,26 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { NgxUiLoaderService } from "ngx-ui-loader";
-import { IacCheckHelper } from "projects/atlp-iac-ui/projects/@iac-shared/helper/check";
 import { BehaviorSubject } from "rxjs";
 import { IacDecCom<%=classify(name)%>ApiConfig } from "../../../configs/iac-dec-com-<%=name%>-api.config";
 import { AtlpRichClassicTableEmitElInfoTable } from "projects/atlp-table/src/lib/models/atlp-rich-classic-table-interfaces";
-import { IacDecCom<%=classify(name)%>CardStatus } from "../../../enums/iac-dec-com-<%=name%>-card-status.enum";
 import { IacDecComCommonService } from "../../../../shared/services/iac-dec-com-common.service";
-import { IacDecCom<%=classify(name)%>ListViewModel } from "../../../interfaces/iac-dec-com-<%=name%>-list-view.interface";
+import {
+  IacDecComTableObjViewModel,
+  IacDecComTableListRequestModel,
+} from "../../../../shared/models/iac-dec-com-table-list-models/iac-dec-com-table-list.models";
+
 
 @Injectable({
   providedIn: "root",
 })
 export class IacDecCom<%=classify(name)%>TableDataService {
-  COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA: IacDecCom<%=classify(name)%>ListViewModel[] = [];
-  COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$: BehaviorSubject<any> = new BehaviorSubject<
-    IacDecCom<%=classify(name)%>ListViewModel[]
-  >([]);
+  COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA: IacDecComTableObjViewModel[] = [];
+  COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$: BehaviorSubject<IacDecComTableObjViewModel> =
+    new BehaviorSubject<IacDecComTableObjViewModel>(null);
   public userSelectedInfo$: BehaviorSubject<AtlpRichClassicTableEmitElInfoTable> =
     new BehaviorSubject<AtlpRichClassicTableEmitElInfoTable>(null);
+  totalCount: number = 0;
 
   constructor(
     public httpClient: HttpClient,
@@ -27,88 +29,30 @@ export class IacDecCom<%=classify(name)%>TableDataService {
     private iacDecComCommonService: IacDecComCommonService
   ) {}
 
-  async searchTableData(payload) {
-    this.ngxLoaderService.start();
+  async searchTableData(payload: IacDecComTableListRequestModel) {
+    //initial loading fix with timeout
+    setTimeout(() => {
+      this.ngxLoaderService.start();
+    }, 1000);
+
     try {
-      let response = await new Promise((resolve, reject) => {
-        this.iacDecComCommonService.searchTableData(payload, resolve, reject);
-      });
-      if (IacCheckHelper.isNull(response)) {
-        this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA = [];
-        return [...this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA];
-      }
-      this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA = [
-        ...this.mapEntitiesToModels(response),
-      ];
-      this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$.next([
-        ...this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA,
-      ]);
-      return [...this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA];
+      let response: IacDecComTableObjViewModel = await new Promise(
+        (resolve, reject) => {
+          this.iacDecComCommonService.searchTableData(payload, resolve, reject);
+        }
+      );
+
+      this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$.next({ ...response });
+      return { ...response };
     } catch (error) {
-      console.log("searchTableData for COM_<%=underscore(name).toUpperCase() %> failed: => ", error);
-      this.ngxLoaderService.stop();
-      this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$.next([]);
-      return [];
-    }
-  }
+      console.log("searchTableData for COM_GATE_PASS failed: => ", error);
 
-  mapEntitiesToModels(data: any): IacDecCom<%=classify(name)%>ListViewModel[] {
-    let _results = [];
-    data.forEach((record) => {
-      const requiredOBj = {
-        id: 1,
-        info: {
-          VesselCode: record.VesselCode,
-          dONumber: record.DONumber,
-          port: record.PortEngName,
-          arrivaltime: record.ArrivalDate,
-          arrivalDate: record.ArrivalDate,
-          billType: record.BillEngType,
-        },
-        VesselCode: {
-          status: IacDecCom<%=classify(name)%>CardStatus.shipper,
-          statusText: record.VesselCode,
-        },
-        voyageNo: {
-          status: IacDecCom<%=classify(name)%>CardStatus.voyageNo,
-          statusText: record.VoyageNumber,
-        },
-        port: {
-          status: IacDecCom<%=classify(name)%>CardStatus.shipper,
-          statusText: record.PortEngName,
-        },
-        arrivalDate: {
-          status: IacDecCom<%=classify(name)%>CardStatus.shipper,
-          statusText: record.ArrivalDate,
-        },
-        billType: {
-          status: IacDecCom<%=classify(name)%>CardStatus.shipper,
-          statusText: record.BillType,
-        },
-        masterBL: {
-          status: IacDecCom<%=classify(name)%>CardStatus.masterBL,
-          statusText: record.MasterBlNumber,
-        },
-        houseBL: {
-          status: IacDecCom<%=classify(name)%>CardStatus.houseBL,
-          statusText: record.HouseBlNumber,
-        },
-        consignee: {
-          status: IacDecCom<%=classify(name)%>CardStatus.consignee,
-          statusText: record.Consignee,
-        },
-        shipper: {
-          status: IacDecCom<%=classify(name)%>CardStatus.shipper,
-          statusText: record.Shipper,
-        },
-        agentCode: {
-          status: IacDecCom<%=classify(name)%>CardStatus.agentCode,
-          statusText: record.AgentCode,
-        },
+      let mappedResponse: IacDecComTableObjViewModel = {
+        iacDecComTableList: [],
+        totalRecords: 0,
       };
-
-      _results.push(requiredOBj);
-    });
-    return _results;
+      this.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$.next(mappedResponse);
+      return mappedResponse;
+    }
   }
 }

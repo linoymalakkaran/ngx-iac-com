@@ -1,3 +1,0 @@
-export * from "./iac-dec-com-<%=name%>-card.interface";
-export * from "./iac-dec-com-<%=name%>-info.interface";
-export * from "./iac-dec-com-<%=name%>-list-view.interface";

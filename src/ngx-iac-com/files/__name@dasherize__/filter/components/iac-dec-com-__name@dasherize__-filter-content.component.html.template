@@ -1,3 +1,0 @@
-<div [formGroup]="filterForm">
-  <mat-accordion class="filters-accordion" multi> </mat-accordion>
-</div>

@@ -21,7 +21,6 @@
     ></atlp-progress-bar>
   </div>
   <div
-    id="salClearingFormId"
     class="drawer-body"
     atlpPerfectScrollbar
     cdkScrollable
@@ -66,82 +65,88 @@
       </div>
       <div class="appointment-info-col" fxFlex="48%" fxFlex.gt-sm="22%"></div>
     </div>
-    <form [formGroup]="form" #formBody>
-      <mat-accordion
-        #sideBarAccordion="matAccordion"
-        class="example-headers-align"
-        multi
+    <fieldset
+      [ngClass]="{
+        disabled: isSuperUser || applicationRefNo
+      }"
+      [ngClass]="{ disabled: isSuperUser || applicationRefNo }"
+    >
+      <form [formGroup]="form" #formBody>
+        <mat-accordion
+          #sideBarAccordion="matAccordion"
+          class="example-headers-align"
+          multi
+        >
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-description #matExpansionPanelDescriptionRef>
+                <span class="panel-title">{{
+                  "Accordion_One" | translate
+                }}</span>
+                <span class="panel-info"></span>
+              </mat-panel-description>
+              <atlp-progress-bar
+                class="panel-small"
+                [value]="accordion_1_progress"
+                mode="determinate"
+                mode="determinate"
+              ></atlp-progress-bar>
+            </mat-expansion-panel-header>
+
+            <!-- <iac-dec-com-accordion-one></iac-dec-com-accordion-one> -->
+          </mat-expansion-panel>
+        </mat-accordion>
+        <mat-accordion class="example-headers-align" multi>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-description #matExpansionPanelDescriptionRef>
+                <span class="panel-title">{{
+                  "Accordion_Two" | translate
+                }}</span>
+                <span class="panel-info"></span>
+              </mat-panel-description>
+              <atlp-progress-bar
+                class="panel-small"
+                [value]="accordion_2_progress"
+                mode="determinate"
+                mode="determinate"
+              ></atlp-progress-bar>
+            </mat-expansion-panel-header>
+
+            <!-- <iac-dec-com-accordion-two></iac-dec-com-accordion-two> -->
+          </mat-expansion-panel>
+        </mat-accordion>
+      </form>
+    </fieldset>
+    <ng-container *ngIf="!applicationRefNo && !isSuperUser && draftID">
+      <div
+        fxLayout="row wrap"
+        class="new-voyage-section"
+        fxLayoutGap="40px"
+        fxLayoutGap.xs="0px"
+        fxLayoutGap.sm="0px"
       >
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-description #matExpansionPanelDescriptionRef>
-              <span class="panel-title">{{ "Accordion_One" | translate }}</span>
-              <span class="panel-info"></span>
-            </mat-panel-description>
-            <atlp-progress-bar
-              class="panel-small"
-              [value]="accordion_1_progress"
-              mode="determinate"
-              mode="determinate"
-            ></atlp-progress-bar>
-          </mat-expansion-panel-header>
-
-          <iac-dec-com-accordion-one></iac-dec-com-accordion-one>
-        </mat-expansion-panel>
-      </mat-accordion>
-      <mat-accordion class="example-headers-align" multi>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-description #matExpansionPanelDescriptionRef>
-              <span class="panel-title">{{ "Accordion_Two" | translate }}</span>
-              <span class="panel-info"></span>
-            </mat-panel-description>
-            <atlp-progress-bar
-              class="panel-small"
-              [value]="accordion_2_progress"
-              mode="determinate"
-              mode="determinate"
-            ></atlp-progress-bar>
-          </mat-expansion-panel-header>
-
-          <iac-dec-com-accordion-two></iac-dec-com-accordion-two>
-        </mat-expansion-panel>
-      </mat-accordion>
-      <mat-accordion class="example-headers-align" multi>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-description #matExpansionPanelDescriptionRef>
-              <span class="panel-title">{{
-                "Accordion_Three" | translate
-              }}</span>
-              <span class="panel-info"></span>
-            </mat-panel-description>
-            <atlp-progress-bar
-              class="panel-small"
-              [value]="accordion_3_progress"
-              mode="determinate"
-              mode="determinate"
-            ></atlp-progress-bar>
-          </mat-expansion-panel-header>
-
-          <div class="panel-body">
-            <div class="panel-row">
-              <div
-                fxLayout="row-reverse wrap"
-                fxLayoutGap="10px"
-                fxLayoutGap.xs="0px"
-                fxLayoutGap.sm="0px"
-              >
-                <iac-dec-com-tamm-error
-                  [listName]="'accordion_3_list'"
-                ></iac-dec-com-tamm-error>
-              </div>
-              <iac-dec-com-accordion-three></iac-dec-com-accordion-three>
-            </div>
+        <div
+          class="field-wrap bg"
+          fxFlex="100"
+          fxFlex.xs="100"
+          fxFlex.sm="100"
+          fxLayout="column"
+        >
+          <div fxLayout="row" fxFlex="100%">
+            <mat-checkbox
+              class="light-purple-select"
+              [checked]="checkboxAcceptTerms"
+              [disabled]="false"
+              (click)="toggleSidebarOpen(IacSidebarName.termsAndConditions)"
+              (change)="checkboxChanged($event.checked)"
+            >
+              {{ "AcceptTC" | translate }}
+            </mat-checkbox>
           </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </form>
+        </div>
+      </div>
+    </ng-container>
   </div>
   <div
     class="validation-block"
@@ -217,8 +222,12 @@
   </button>
   <!-- Start soc-wrap -->
   <div class="soc-wrap" fxLayout="column" fxLayoutAlign="end center">
-    <!-- *ngIf="!applicationRefNo && !isSuperUser" -->
-    <button class="round-btn" type="submit" (click)="saveDraft()">
+    <button
+      *ngIf="!applicationRefNo"
+      class="round-btn"
+      type="submit"
+      (click)="saveDraft()"
+    >
       <mat-icon
         svgIcon="save-icon"
         aria-hidden="false"
@@ -226,25 +235,32 @@
         matTooltipPosition="before"
       ></mat-icon>
     </button>
-    <button class="round-btn" *ngIf="draftID" (click)="openAttachment()">
-      <!-- *ngIf="!applicationRefNo" -->
+    <button
+      *ngIf="draftID && svmOid"
+      class="round-btn"
+      (click)="openAttachment()"
+    >
       <mat-icon
+        *ngIf="applicationRefNo"
         svgIcon="attach-icon"
         aria-hidden="false"
         matTooltip="{{ 'SubmitAttachment' | translate }}"
         matTooltipPosition="before"
       ></mat-icon>
-      <!-- *ngIf="applicationRefNo" -->
       <mat-icon
-        *ngIf="false"
+        *ngIf="applicationRefNo"
         svgIcon="download-icon"
         aria-hidden="false"
         matTooltip="{{ 'ViewAttachment' | translate }}"
         matTooltipPosition="before"
       ></mat-icon>
     </button>
-    <!-- *ngIf="!applicationRefNo && !isSuperUser && draftID" -->
-    <button class="round-btn" type="submit" (click)="checkDocumentsSubmitted()">
+    <button
+      *ngIf="!applicationRefNo && !isSuperUser && draftID && svmOid"
+      class="round-btn"
+      type="submit"
+      (click)="checkDocumentsSubmitted()"
+    >
       <mat-icon
         svgIcon="soc-icon"
         aria-hidden="false"
@@ -252,8 +268,11 @@
         matTooltipPosition="before"
       ></mat-icon>
     </button>
-    <!-- *ngIf="isPayAndPrintEnabled && !isSuperUser" -->
-    <button class="round-btn" (click)="getJobStatus()">
+    <button
+      *ngIf="isPayAndPrintEnabled && !isSuperUser"
+      class="round-btn"
+      (click)="getJobStatus()"
+    >
       <mat-icon
         svgIcon="payment"
         aria-hidden="false"
@@ -263,6 +282,7 @@
     </button>
     <button
       class="round-btn"
+      *ngIf="applicationStatus == 'COMPLETED'"
       (click)="toggleSidebarOpen(IacSidebarName.iacDecViewCharges)"
     >
       <mat-icon
@@ -290,6 +310,7 @@
     <ng-container>
       <iac-dec-com-shared-upload
         [iacDecComDocInputModel]="iacDecComDocInputModel"
+        [attachmentHead]="'UploadTheAttachmentToCompleteTheForm'"
       >
       </iac-dec-com-shared-upload>
     </ng-container>
@@ -325,7 +346,28 @@
   <ng-template #AtlpSidebarComponentContent>
     <iac-dec-com-view-charges
       [applicationRefNo]="applicationRefNo"
-      [serviceCode]="'17'"
+      [serviceCode]="serviceCode"
     ></iac-dec-com-view-charges>
+  </ng-template>
+</atlp-sidebar>
+
+<atlp-sidebar
+  class="sidebar-with-content"
+  [name]="IacSidebarName.termsAndConditions"
+  position="right"
+  [folded]="false"
+  [invisibleOverlay]="true"
+  [superimposed]="true"
+  [isTemplate]="true"
+>
+  <ng-template #AtlpSidebarComponentContent>
+    <ng-container>
+      <iac-dec-com-terms-and-conditions
+        [serviceCode]="serviceCode"
+        [language]="selectedLanguage"
+        (acceptStatus)="selectedStatus($event)"
+      >
+      </iac-dec-com-terms-and-conditions>
+    </ng-container>
   </ng-template>
 </atlp-sidebar>

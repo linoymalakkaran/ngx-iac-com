@@ -1,14 +1,19 @@
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@microsoft/signalr";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 
 @Injectable({
   providedIn: "root",
 })
 export class IacDecCom<%=classify(name)%>Service {
+  selectedDraft = new BehaviorSubject<string>(null);
   private _unsubscribeAll$ = new Subject<any>();
 
   constructor(private _httpClient: HttpClient) {}
+
+  changeSelectedDraft(draftId: string) {
+    this.selectedDraft.next(draftId);
+  }
 
   ngOnDestroy() {
     this._unsubscribeAll$.next();

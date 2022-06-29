@@ -1,11 +1,5 @@
 <div class="atlp-table-flex-container atlp-table-control-button-margin">
-  <button
-    (click)="deleteRow()"
-    mat-raised-button
-    color="warn"
-  >
-    Delete
-  </button>
+  <button (click)="deleteRow()" mat-raised-button color="warn">Delete</button>
   <button
     mat-raised-button
     color="basic"

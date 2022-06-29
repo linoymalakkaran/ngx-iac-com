@@ -14,12 +14,13 @@ import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { TranslateModule } from "@ngx-translate/core";
 import { IacDecCom<%=classify(name)%>TableComponent } from "./components/iac-dec-com-<%=name%>-table.component";
 import { IacSubHeaderModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-sub-header/iac-sub-header.module";
-import { IacDecCom<%=classify(name)%>FilterModule } from "../../filter/iac-dec-com-<%=name%>-filter.module";
 import { AtlpRichClassicTableModule } from "projects/atlp-table/src/public-api";
 import { IacDecCom<%=classify(name)%>TableSectionModule } from "../iac-dec-com-<%=name%>-table-section/iac-dec-com-<%=name%>-table-section.module";
 import { PortalModule } from "@angular/cdk/portal";
 import { IacSinglefileAttachmentModule } from "projects/atlp-iac-ui/projects/@iac-shared/iac-file-upload-components/attach-documents/single-file-attachment.module";
 import { IacDecCom<%=classify(name)%>Module } from "../../iac-dec-com-<%=name%>.module";
+import { IacDecComCommonFilterModule } from "../../../shared/iac-dec-com-filter-common/iac-dec-com-filter-common.module";
+import { AtlpPaginationModule } from "projects/@atlp/components/atlp-pagination/atlp-pagination.module";
 
 const IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_TABLE_MODULE_IMPORTS = [
   CommonModule,
@@ -38,9 +39,10 @@ const IAC_DEC_COM_<%=underscore(name).toUpperCase() %>_TABLE_MODULE_IMPORTS = [
   NgxMaterialTimepickerModule,
   TranslateModule.forChild(),
   IacSubHeaderModule,
-  IacDecCom<%=classify(name)%>FilterModule,
   PortalModule,
   IacDecCom<%=classify(name)%>Module,
+  IacDecComCommonFilterModule,
+  AtlpPaginationModule,
 ];
 
 @NgModule({

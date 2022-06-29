@@ -1,8 +1,0 @@
-export interface IacDecCom<%=classify(name)%>InfoData {
-  VesselCode?: string;
-  dONumber?: string;
-  port?: string;
-  arrivaltime?: string;
-  arrivalDate?: string;
-  billType?: string;
-}

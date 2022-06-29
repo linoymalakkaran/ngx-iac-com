@@ -1,5 +1,0 @@
-::ng-deep {
-  .left-positioned .sidebarParent .toggle-light-mode:lang(en) {
-    left: 92% !important;
-  }
-}

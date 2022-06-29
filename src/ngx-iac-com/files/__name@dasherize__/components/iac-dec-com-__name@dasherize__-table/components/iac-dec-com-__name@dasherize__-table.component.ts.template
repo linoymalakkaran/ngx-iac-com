@@ -27,16 +27,13 @@ import { atlpRichClassicTableBreakpointsListenerDefault } from "projects/atlp-ta
 import { AtlpMileStoneBridgePortalService } from "projects/atlp-table/src/lib/component/atlp-rich-table-milestone/services/atlp-rich-table-milestone-bridge.service";
 import { IacSidebarName } from "projects/atlp-iac-ui/projects/@iac-shared/models/enums/sidebar-name.enum";
 import { IacFilterKey } from "projects/atlp-iac-ui/projects/@iac-shared/models/enums/filter-name.enum";
-import { IacDecCom<%=classify(name)%>ListViewModel } from "../../../interfaces/iac-dec-com-<%=name%>-list-view.interface";
 import { IacDecCom<%=classify(name)%>InfoComponent } from "../../iac-dec-com-<%=name%>-table-section/components/iac-dec-com-<%=name%>-info/iac-dec-com-<%=name%>-info.component";
 import { IacDecCom<%=classify(name)%>CardComponent } from "../../iac-dec-com-<%=name%>-table-section/components/iac-dec-com-<%=name%>-card/iac-dec-com-<%=name%>-card.component";
-import { IacDecCom<%=classify(name)%>ColumnsDef } from "../../../models/iac-dec-com-<%=name%>-columns-def";
 import {
   atlpDefaultPaginatorData,
   IAtlpInputPaginator,
   IAtlpPageResponseModel,
 } from "projects/@atlp/components/atlp-pagination/models/altp-paginator.model";
-import { IacDecCom<%=classify(name)%>FilterComponent } from "../../../filter/components/iac-dec-com-<%=name%>-filter-content.component";
 import { IacDecCom<%=classify(name)%>RichTableMileStoneService } from "../services/iac-dec-com-<%=name%>-rich-table-milestone.service";
 import { IacDecCom<%=classify(name)%>TableDataService } from "../services/iac-dec-com-<%=name%>-table-data.service";
 import { IacUserAccountInfoService } from "projects/atlp-iac-ui/projects/@iac-shared/services/user-account.service";
@@ -46,7 +43,6 @@ import {
   AtlpRichClassicTableEmitElInfoTable,
   AtlpRichClassicTableEmitElTable,
 } from "projects/atlp-table/src/lib/models/atlp-rich-classic-table-interfaces";
-import { IacDecCom<%=classify(name)%>ApiConfig } from "../../../configs/iac-dec-com-<%=name%>-api.config";
 import { IacCheckHelper } from "projects/atlp-iac-ui/projects/@iac-shared/helper/check";
 import { ATLP_PORTAL_TABLE_DATA } from "projects/atlp-table/src/lib/injectors/atlp-table-portal.injector";
 import { debounceTimeDecorator } from "projects/atlp-iac-ui/projects/@iac-shared/decorators/function-decorator";
@@ -56,6 +52,14 @@ import { HttpClient } from "@angular/common/http";
 import { SnakBarService } from "projects/@atlp/components/snak-bars/service/snak-bar-default.component";
 import { takeUntil } from "rxjs/operators";
 import { IacDecFilterType } from "projects/atlp-iac-ui/projects/@iac-shared/iac-filters/interfaces/savedFilter";
+import { IacDecComServiceCodeEnum } from "../../../../shared/enums/iac-dec-com-service-code.enum";
+import {
+  IacDecComTableListRequestModel,
+  IacDecComTableObjViewModel,
+  IacDecComTableViewModel,
+} from "../../../../shared/models/iac-dec-com-table-list-models/iac-dec-com-table-list.models";
+import { NgxUiLoaderService } from "ngx-ui-loader";
+import { IacDecComTableColumnsDef } from "../../../../shared/models/iac-dec-com-table-list-models/iac-dec-com-common-columns-def";
 
 @Component({
   selector: "iac-dec-com-<%=name%>-table",
@@ -68,10 +72,10 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
     [];
   Com<%=classify(name)%>InfoComponent: ComponentPortal<IacDecCom<%=classify(name)%>InfoComponent>[] =
     [];
-  table: AtlpRichClassicTableModeSelectionDrag<IacDecCom<%=classify(name)%>ListViewModel> =
-    atlpRichClassicTableCreateTableModeSelectionDrag<IacDecCom<%=classify(name)%>ListViewModel>(
+  table: AtlpRichClassicTableModeSelectionDrag<IacDecComTableViewModel> =
+    atlpRichClassicTableCreateTableModeSelectionDrag<IacDecComTableViewModel>(
       new MatTableDataSource([]),
-      IacDecCom<%=classify(name)%>ColumnsDef,
+      IacDecComTableColumnsDef,
       AtlpRichClassicTableMode.rich
     );
   typeViewBasic: boolean;
@@ -88,16 +92,11 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
     name: "atlpCom<%=classify(name)%>Table",
     className: "atlpCom<%=classify(name)%>Table",
   };
-  public allowedFileTypes = ["txt"];
   public maxContainerFileUploadSize: number = 10;
-  public containerUploadUrl: string;
-  public chassisUploadErrors: any = [];
   userInfo: IacUserAccountInfo;
   selectedLanguage = "en";
   SidebarName = IacSidebarName;
   IacFilterKey = IacFilterKey;
-  @ViewChild(IacDecCom<%=classify(name)%>FilterComponent)
-  com<%=classify(name)%>Filter: IacDecCom<%=classify(name)%>FilterComponent;
   userAccountInfo: any;
   centerCodeList: any[];
   selectedCenter: any;
@@ -112,6 +111,9 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
     this._defaultSnakBar,
     this.IacDecComFilterType.toString()
   );
+  iacDecComServiceCode: IacDecComServiceCodeEnum =
+    IacDecComServiceCodeEnum.COM_<%=underscore(name).toUpperCase() %>;
+  pageSize: number = 10;
 
   constructor(
     public _atplSidebarService: AtlpSidebarService,
@@ -121,13 +123,13 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
     public _com<%=classify(name)%>RichTableMileStoneService: IacDecCom<%=classify(name)%>RichTableMileStoneService,
     private _atlpMileStoneBridgePortalService: AtlpMileStoneBridgePortalService,
     private _com<%=classify(name)%>TableDataService: IacDecCom<%=classify(name)%>TableDataService,
-    private _com<%=classify(name)%>DataService: IacDecCom<%=classify(name)%>TableDataService,
     public _userAccountInfoService: IacUserAccountInfoService,
     private _atlpTranslationService: AtlpTranslationService,
     public _translateService: TranslateService,
     private _iacDecComShareApiConfig: IacDecComShareApiConfig,
     private _httpClient: HttpClient,
-    private _defaultSnakBar: SnakBarService
+    private _defaultSnakBar: SnakBarService,
+    private ngxLoaderService: NgxUiLoaderService
   ) {
     this._iconsService.registerIcons(this.icons);
   }
@@ -136,7 +138,7 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
     this._atlpMileStoneBridgePortalService.setAtlpRichTableMileStoneActionPortal(
       this.portalActionContent
     );
-    atlpRichClassicTableAddColumnsListenerTableModeDrag<IacDecCom<%=classify(name)%>ListViewModel>(
+    atlpRichClassicTableAddColumnsListenerTableModeDrag<IacDecComTableViewModel>(
       this.table,
       atlpRichClassicTableBreakpointsListenerDefault,
       this._breakpointObserver,
@@ -165,36 +167,48 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
   }
 
   ngAfterViewInit(): void {
-    this.updateTableDataAndTemplate(0, 10);
+    this.updateTableDataAndTemplate(1, 10);
   }
 
   updateTableDataAndTemplate(currentPage, pageSize) {
     this.subscriptions.push(
       this._com<%=classify(name)%>TableDataService.COM_<%=underscore(name).toUpperCase() %>_TABLE_DATA$.pipe(
         takeUntil(this._unsubscribeAll$)
-      ).subscribe((Com<%=classify(name)%>_data) => {
-        if (IacCheckHelper.isArray(Com<%=classify(name)%>_data)) {
+      ).subscribe((response: IacDecComTableObjViewModel) => {
+        if (response && IacCheckHelper.isArray(response.iacDecComTableList)) {
+          this.tablePaginator = {
+            ...this.tablePaginator,
+            totalCount: response.totalRecords,
+          };
           this.setPortalDataAndComponentPortals(
-            Com<%=classify(name)%>_data,
+            response.iacDecComTableList,
             currentPage,
-            pageSize
+            pageSize,
+            response.totalRecords
           );
+        } else {
+          this.ngxLoaderService.stop();
         }
       })
     );
-    const payload = {};
-    this._com<%=classify(name)%>DataService.searchTableData(payload);
+    const payload: IacDecComTableListRequestModel = {
+      serviceCode: IacDecComServiceCodeEnum.COM_GATE_PASS_SVM_SERVICECODE,
+      pageSize: pageSize,
+      pageIndex: currentPage,
+    };
+    this._com<%=classify(name)%>TableDataService.searchTableData(payload);
   }
 
   private setPortalDataAndComponentPortals(
-    Com<%=classify(name)%>_data: any,
-    currentPage: any,
-    pageSize: any
+    com<%=classify(name)%>Data: any,
+    currentPage: number,
+    pageSize: number,
+    totalRecords: number
   ) {
     this.Com<%=classify(name)%>CardComponent = [];
     this.Com<%=classify(name)%>InfoComponent = [];
-    if (Com<%=classify(name)%>_data.length > 0) {
-      Com<%=classify(name)%>_data.forEach((Com<%=classify(name)%>Item) => {
+    if (com<%=classify(name)%>Data.length > 0) {
+      com<%=classify(name)%>Data.forEach((Com<%=classify(name)%>Item) => {
         this.Com<%=classify(name)%>CardComponent.push(
           this.attachCardPortal(Com<%=classify(name)%>Item)
         );
@@ -211,10 +225,28 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
     this._atlpRichClassicTransTablePortalBridgeService.setAtlpRichInfoTemplate(
       this.Com<%=classify(name)%>InfoComponent
     );
+    let newSlicedData = [
+      ...com<%=classify(name)%>Data.slice(currentPage - 1, pageSize),
+    ];
+    if (newSlicedData.length > 20) {
+      const totalCount = newSlicedData.length;
+      const numberOfPages = Math.floor(totalCount / 10);
+      this.table.dataSource.data = [...newSlicedData.slice(0, 10)];
+      for (let i = 2; i <= numberOfPages + 1; i++) {
+        let newData = [...newSlicedData.slice(0, i * 10)];
+        setTimeout(() => {
+          this.table.dataSource.data = newData;
+        }, 3000);
+      }
+    } else {
+      this.table.dataSource.data = [
+        ...newSlicedData.slice(currentPage - 1, pageSize),
+      ];
+    }
 
-    this.table.dataSource.data = [...Com<%=classify(name)%>_data];
-    this.tablePaginator.totalCount = Com<%=classify(name)%>_data.length;
+    this.tablePaginator.totalCount = totalRecords;
     this.tablePaginator = { ...this.tablePaginator };
+    this.ngxLoaderService.stop();
   }
 
   attachInfoPortal(Com<%=classify(name)%>InfoData) {
@@ -222,7 +254,7 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
       IacDecCom<%=classify(name)%>InfoComponent,
       null,
       this.createInjector({
-        Com<%=classify(name)%>InfoData: Com<%=classify(name)%>InfoData,
+        infoObjFromParent: Com<%=classify(name)%>InfoData,
       })
     );
     return componentPortal;
@@ -232,7 +264,7 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
     const componentPortal = new ComponentPortal(
       IacDecCom<%=classify(name)%>CardComponent,
       null,
-      this.createInjector({ cardData: cardData })
+      this.createInjector({ cardObjFromParent: cardData })
     );
     return componentPortal;
   }
@@ -246,12 +278,13 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
   clickedRow(event: AtlpRichClassicTableEmitElTable): void {
     // console.log(event);
     this.selectedRow = event;
-    if (event?.data) {
-    }
   }
 
   clickedCell(event: AtlpRichClassicTableEmitElTable): void {
     // console.log(event);
+    this.selectedRow = event;
+    if (event?.data) {
+    }
   }
 
   onClickedInfo(event: AtlpRichClassicTableEmitElInfoTable): void {
@@ -261,7 +294,9 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
   onClickedInfoSelection(
     userSelectedInfo: AtlpRichClassicTableEmitElInfoTable
   ): void {
-    console.log(userSelectedInfo);
+    this._com<%=classify(name)%>TableDataService.userSelectedInfo$.next({
+      ...userSelectedInfo,
+    });
   }
 
   onSwitchView(): void {
@@ -280,13 +315,10 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
   }
 
   onPageChange(paginationResult: IAtlpPageResponseModel) {
-    const currentPage =
-      (paginationResult.currentPage - 1) * paginationResult.pageSize;
-    this.tablePaginator.currentPage = currentPage;
-    this.tablePaginator.pageSize = currentPage + paginationResult.pageSize;
-    const payload: any = {
-      SKIP: currentPage,
-      TAKE: currentPage + paginationResult.pageSize,
+    const payload: IacDecComTableListRequestModel = {
+      serviceCode: IacDecComServiceCodeEnum.COM_<%=underscore(name).toUpperCase() %>_SVM_SERVICECODE,
+      pageSize: paginationResult.pageSize,
+      pageIndex: paginationResult.currentPage,
     };
     this._com<%=classify(name)%>TableDataService.searchTableData(payload);
   }
@@ -294,32 +326,21 @@ export class IacDecCom<%=classify(name)%>TableComponent implements OnInit, OnDes
   @debounceTimeDecorator(1000, 1000)
   search(searchWord) {
     const wildCardSearch = searchWord.trim();
-    const payload: any = {
-      searchText: wildCardSearch,
-      SKIP: 0,
-      TAKE: 10,
+    const payload: IacDecComTableListRequestModel = {
+      serviceCode: IacDecComServiceCodeEnum.COM_<%=underscore(name).toUpperCase() %>_SVM_SERVICECODE,
+      pageSize: this.pageSize,
+      pageIndex: 0,
     };
     this._com<%=classify(name)%>TableDataService.searchTableData(payload);
   }
 
   private get icons(): Array<string> {
     return [
-      "close-white-icon",
-      "soc-icon",
-      "mob-open-menu",
-      "plus-white",
-      "table-icon-one",
+      "filter-icon",
       "table-icon-two",
-      "smock-icon",
-      "print-black",
-      "copy-black",
-      "sort-ascending-fill",
-      "x-fill-purple-dark",
+      "table-icon-one",
       "expand_less",
       "expand_more",
-      "warning-circle-fill",
-      "attachment",
-      "upload",
     ];
   }
 

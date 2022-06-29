@@ -1,9 +1,0 @@
-export enum IacDecCom<%=classify(name)%>CardStatus {
-  masterBL = "masterBL",
-  houseBL = "houseBL",
-  consignee = "consignee",
-  shipper = "shipper",
-  actions = "actions",
-  voyageNo = "voyageNo",
-  agentCode = "agentCode",
-}

@@ -10,3 +10,19 @@
     right: auto;
   }
 }
+
+.voyage-info-wrap {
+  transition: all 0.3s ease;
+  background-color: map-get($color, "atlp-white");
+  border: 1px solid map-get($color, "atlp-wrap-border");
+  min-height: 177px;
+  border-radius: 10px;
+  padding: 20px 20px 18px;
+  padding: 16px;
+  position: relative;
+
+  @media (min-width: 1024px) {
+    min-height: 177px;
+    padding: 16px 20px 14px;
+  }
+}

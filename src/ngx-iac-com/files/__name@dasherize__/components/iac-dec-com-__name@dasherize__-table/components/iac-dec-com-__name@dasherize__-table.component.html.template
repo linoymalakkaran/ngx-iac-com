@@ -120,7 +120,7 @@
     [atlpTableConfig]="atlpCom<%=classify(name)%>TableConfig"
     [clickedRow]="true"
     [source]="_com<%=classify(name)%>RichTableMileStoneService"
-    [tablePaginator]=""
+    [tablePaginator]="tablePaginator"
     (onClickedRow)="clickedRow($event)"
     (onClickedCell)="clickedCell($event)"
     (onPageChange)="onPageChange($event)"
@@ -129,7 +129,6 @@
   >
   </atlp-rich-classic-table>
 </ng-template>
-<!-- [tablePaginator]="tablePaginator" -->
 
 <ng-template #Com<%=classify(name)%>filterTemplate>
   <atlp-sidebar
@@ -142,18 +141,18 @@
   >
     <ng-template #AtlpSidebarComponentContent>
       <iac-filters
-        [toggleFilters]="toggleDoFilters"
         [dataType]="'service'"
-        title="{{ 'COM_<%=underscore(name).toUpperCase() %>_FILTER' | translate }}"
+        title="{{ 'FILTER' | translate }}"
         sectiontitle1="{{ 'SEARCHBY' | translate }}"
         [filterServices]="iacDecComFilterService"
         [service]="iacDecComFilterService"
         [getFilterDataFn]="getDoFilterDataFn"
         [key]="IacFilterKey.iacCom<%=classify(name)%>Filter"
       >
-        <iac-dec-com-<%=name%>-filter-content
+        <iac-dec-com-filter-common-content
+          [iacDecComServiceCode]="iacDecComServiceCode"
           class="filter-body"
-        ></iac-dec-com-<%=name%>-filter-content>
+        ></iac-dec-com-filter-common-content>
       </iac-filters>
     </ng-template>
   </atlp-sidebar>
